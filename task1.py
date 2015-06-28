@@ -275,7 +275,7 @@ class BytePrinter(PipelineStage):
     def enable(self, flag):
         self.printEnabled = flag
 
-    def isEnable(self, flag):
+    def isEnabled(self, flag):
         return self.printEnabled
         
 class Transport(PipelineStage):
