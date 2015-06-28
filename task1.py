@@ -247,6 +247,7 @@ class BytePrinter(PipelineStage):
     Prints the incoming data
     '''
     def __init__(self):
+        super(BytePrinter, self).__init__()
         self.lock = threading.Lock()
         self.stat = StatManager.Block("")
         self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
@@ -271,6 +272,7 @@ class Transport(PipelineStage):
     Second stage of the pipeline
     '''
     def __init__(self, name):
+        super(Transport, self).__init__()
         self.lock = threading.Lock()
         self.name = name
         self.stat = StatManager.Block(name)
@@ -298,6 +300,7 @@ class PacketPHY(PipelineStage):
     Packet PHY pipeline stage 
     '''
     def __init__(self, name, minimumPacketSize=10):
+        super(PacketPHY, self).__init__()
         self.minimumPacketSize = minimumPacketSize
         self.name = name
         self.lock = threading.Lock()
@@ -379,7 +382,7 @@ class BytePHY(Transport):
     Get bytes, forward the bytes to the next stage
     '''
     def __init__(self, name):
-        super(Transport, self).__init__()
+        super(BytePHY, self).__init__()
 
  
 class cmdGroundLevel(cmd.Cmd):
@@ -470,8 +473,8 @@ if __name__ == '__main__':
     transport1.setNext(bytePrinter)
 
     if (configurationStr == "GTBBTR"):
-        bytePhy0 = BytePhy("bytePhy0")
-        bytePhy1 = BytePhy("bytePhy1")
+        bytePhy0 = BytePHY("bytePhy0")
+        bytePhy1 = BytePHY("bytePhy1")
         transport0.setNext(bytePhy0)
         bytePhy0.setNext(bytePhy1)
         bytePhy1.setNext(transport1)
@@ -484,14 +487,14 @@ if __name__ == '__main__':
         packetPhy1.setNext(transport1)
 
     elif (configurationStr == "GTBPTR"):
-        bytePhy0 = BytePhy("bytePhy0")
+        bytePhy0 = BytePHY("bytePhy0")
         packetPhy0 = PacketPHY("packetPhy0")
         transport0.setNext(bytePhy0)
         bytePhy0.setNext(packetPhy0)
         packetPhy0.setNext(transport1)
         
     elif (configurationStr == "GTPBTR"):
-        bytePhy0 = BytePhy("bytePhy0")
+        bytePhy0 = BytePHY("bytePhy0")
         packetPhy0 = PacketPHY("packetPhy0")
         transport0.setNext(packetPhy0)
         packetPhy0.setNext(bytePhy0)
