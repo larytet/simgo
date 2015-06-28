@@ -368,6 +368,7 @@ class PacketPHY(PipelineStage):
 
         if (len(self.collectedData) == 0): 
             self.txTimer = threading.Timer(1.0, self.timeoutExpired)
+            self.txTimer.start()
             self.stat.timerStarted = self.stat.timerStarted + 1
 
             
@@ -512,7 +513,7 @@ if __name__ == '__main__':
     configurationStr = arguments['--stages']
         
     bytePrinter = BytePrinter()
-    byteGenerator = ByteGenerator()
+    byteGenerator = ByteGenerator(1, 4.5)
     transport0 = Transport("transport0")
     transport1 = Transport("transport1")
     byteGenerator.setNext(transport0)
