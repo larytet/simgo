@@ -165,7 +165,7 @@ class PipelineStage():
     '''
     A stage of the pipeline
     '''
-    def __init__(self, name):
+    def __init__(self):
         self.nextStage = None
         self.name = name
 
@@ -186,6 +186,8 @@ class PipelineStage():
     def getName(self):
         return self.name
         
+    def setName(self, name):
+        return self.name = name
     
 class ByteGenerator(threading.Thread, PipelineStage):
     '''
@@ -193,15 +195,16 @@ class ByteGenerator(threading.Thread, PipelineStage):
     Wake up periodically and generate a packet of data
     A packet length and payload are random numbers  
     '''
-    def __init__(self, maximumPacketSize=7, period=0.4):
+    def __init__(self, maximumBurstSize=7, period=0.4):
         '''
-        @param maximumPacketSize - maximum packet size to generate, the length is random
+        @param maximumBurstSize - maximum packet size to generate, the length is random
         @param period - sleep time between the packets  
         '''
-        self.maximumPacketSize, self.period = maximumPacketSize, period
+        super(ByteGenerator, self).__init__()
+        self.maximumBurstSize, self.period = maximumBurstSize, period
         
         self.stat = StatManager.Block("")
-        self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
+        self.stat.addFieldsInt(["wakeups", "packets", "bytes", "zeroPackets", "noSink"])
         statManager.addCounters("ByteGenerator", self.stat)
         
     def run(self):
@@ -210,19 +213,24 @@ class ByteGenerator(threading.Thread, PipelineStage):
         '''
         while (not self.exitFlag):
             time.sleep(self.period)
-            packetSize = randint(0, self.maximumPacketSize)
+            packetSize = randint(0, self.maximumBurstSize)
             packet = os.urandom()
             self.stat.wakeups = self.stat.wakeups + 1
-            packetLen = len(self.stat.packets)
+            packetLen = len(packet)
             if (packetLen > 0):
-                self.stat.packets = self.stat.packets + 1
-                self.stat.bytes = self.stat.bytes + packetLen
-                _sendBytes(packet)
+                _sendBytes(packet, packetLen)
+            else:
+                self.stat.zeroPackets = self.stat.zeroPackets + 1
                 
-    def _sendBytes(self, packet):            
-        if (sink != None):
+                
+    def _sendBytes(self, packet, packetLen):            
+        if (self.nextStage != None):
+            self.stat.packets = self.stat.packets + 1
+            self.stat.bytes = self.stat.bytes + packetLen
             for (b in packet):
-                sink.tx(b)   
+                self.nextStage.tx([b])
+        else:   
+            self.stat.noSink = self.stat.noSink + 1
         
     def cancel(self):
         self.exitFlag = True
@@ -230,7 +238,7 @@ class ByteGenerator(threading.Thread, PipelineStage):
 class BytePrinter(PipelineStage):
     '''
     Last stage of the data pipeline
-    Implements "sink" method which prints the incoming data
+    Prints the incoming data
     '''
     def __init__(self):
         self.lock = threading.Lock()
@@ -259,24 +267,49 @@ class Transport(PipelineStage):
     def __init__(self, name):
         self.lock = threading.Lock()
         self.name = name
-        self.lock = threading.Lock()
         self.stat = StatManager.Block(name)
-        self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
+        self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink"])
         statManager.addCounters("Transport", self.stat)
 
-    def tx(self, packet):
+    def tx(self, data):
         '''
-        A data sink which forwards packets to the next sink in the pipeline
+        A data sink which forwards packets to the next stage in the pipeline
         '''
         self.lock.acquire()
         self.stat.wakeups = self.stat.wakeups + 1
         self.stat.packets = self.stat.packets + 1
-        packetLen = len(self.stat.packets)
+        packetLen = len(data)
         self.stat.bytes = self.stat.bytes + packetLen
         self.lock.release()
         
-        if (self.sink != None):
-            sink.tx(packet)
+        if (self.nextStage != None):
+            sink.tx(data)
+        else:
+            self.stat.noSink = self.stat.noSink + 1
+
+class PacketPHY(PipelineStage):
+    '''
+    Packet PHY pipeline stage 
+    '''
+    def __init__(self, name, minimumPacketSize=10):
+        self.lock = threading.Lock()
+        self.name = name
+        self.stat = StatManager.Block(name)
+        self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
+        statManager.addCounters("Transport", self.stat)
+        self.collectedData = []
+
+    def tx(self, data):
+        '''
+        A data sink which collects bytes and sends packets to the next stage
+        '''
+        self.lock.acquire()
+        self.stat.wakeups = self.stat.wakeups + 1
+        self.stat.bytes = self.stat.bytes + 1
+        self.lock.release()
+        
+        self.collectedData.append(data)
+        if len(self.collectedData > )
         
 '''
 List of commands which will not be repeated when entering an empty line
