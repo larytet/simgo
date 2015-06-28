@@ -193,12 +193,32 @@ class ByteGenerator(threading.Thread):
             time.sleep(self.period)
             packetSize = randint(0, self.maximumPacketSize)
             packet = os.urandom()
+            self.stat.packets = self.stat.packets + 1
+            self.stat.bytes = self.stat.bytes + len(self.stat.packets)
             if (sink != None):
                 sink.send(packet)   
                 
         
     def cancel(self):
         self.exitFlag = True
+
+class BytePrinter():
+    
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.stat = StatManager.Block("")
+        self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
+        statManager.addCounters("BytePrinter", self.stat)
+
+    '''
+    A data sink which prints bytes
+    '''
+    def sink(self, packet):
+        s = bytesToHexString(packet)
+        self.lock.acquire()
+        print s
+        self.lock.release()
+        
         
 '''
 List of commands which will not be repeated when entering an empty line
