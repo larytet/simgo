@@ -62,16 +62,22 @@ def bytesToHexString(data):
 class StatManager:
     '''
     A single place where references to all blocks of debug counters are stored
+    Counters divided in groups, for example a group of ETH counters
+    Every group can contain zero or more blocks (eth0, eth1, ...)
+    Every block contains zero or more debug counters
+    A debug counter is usually an integer or any printable object  
     '''
     def __init__(self):
         self.groups = {}
 
     class Block:
+        '''
+        Useful when there are many instances of the same set of counters. 
+        For example counter for "eth0", "eth1"
+        '''
         def __init__(self, name):
             '''
             @param name is a name of the block. 
-            Useful when there are many instances of the same set of counters. 
-            For example "eth0", "eth1"
             '''
             self.name = name
             self.ignoreFields = []
