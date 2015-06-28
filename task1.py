@@ -210,6 +210,12 @@ class ByteGenerator(threading.Thread):
     Wake up periodically and generate a packet of data 
     '''
     def __init__(self, maximumPacketSize=7, period=0.4):
+        '''
+        Byte generator generates packets between 0 and maximumPacketSize bytes
+        The generator wakes up every "period" seconds
+        @param maximumPacketSize - maximum packet size to generate
+        @param period - sleep time between the packets  
+        '''
         self.maximumPacketSize = maximumPacketSize
 '''
 List of commands which will not be repeated when entering an empty line
