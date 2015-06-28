@@ -292,11 +292,14 @@ class PacketPHY(PipelineStage):
     Packet PHY pipeline stage 
     '''
     def __init__(self, name, minimumPacketSize=10):
-        self.lock = threading.Lock()
+        self.minimumPacketSize = minimumPacketSize
         self.name = name
+        self.lock = threading.Lock()
         self.stat = StatManager.Block(name)
-        self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
+        
+        self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink", "timerStarted", "timerExpired", "timerCanceled"])
         statManager.addCounters("Transport", self.stat)
+        
         self.collectedData = []
 
     def tx(self, data):
@@ -305,12 +308,55 @@ class PacketPHY(PipelineStage):
         '''
         self.lock.acquire()
         self.stat.wakeups = self.stat.wakeups + 1
-        self.stat.bytes = self.stat.bytes + 1
+        
+        self._startTimer()
+
+        self.collectedData.append(data)
+        packetLen = len(self.collectedData)
+        if (packetLen > minimumPacketSize):
+            self._sendBytes(self.collectedData, packetLen)
         self.lock.release()
         
-        self.collectedData.append(data)
-        if len(self.collectedData > )
         
+        
+    def _startTimer(self):
+        '''
+        Start timer on the first arriving byte
+        '''
+        if (self.txTimer):
+            self.txTimer.cancel()
+            self.stat.timerCanceled = self.stat.timerCanceled + 1
+
+        if (len(self.collectedData) == 0): 
+            self.txTimer = threading.Timer(1.0)
+            self.stat.timerStarted = self.stat.timerStarted + 1
+        
+            
+    def _timeoutExpired(self):
+        self.stat.timerExpired = self.stat.timerExpired + 1
+        packetLen = len(self.collectedData)
+        if (packetLen > 0):
+            self._sendBytes(self.collectedData, packetLen)
+        
+        
+    def _sendBytes(self, packet, packetLen):
+        '''
+        Forward bytes to the next stage
+        '''            
+        if (self.nextStage != None):
+            self.stat.packets = self.stat.packets + 1
+            self.stat.bytes = self.stat.bytes + packetLen
+            self.nextStage.tx(packet)
+        else:   
+            self.stat.noSink = self.stat.noSink + 1
+            
+        self._flushData()
+            
+    def _flushData(self):
+        '''
+        Drop all collected data
+        '''
+        self.collectedData = []
  
 class cmdGroundLevel(cmd.Cmd):
     '''
