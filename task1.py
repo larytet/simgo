@@ -531,15 +531,6 @@ def initPipeline(configurationStr):
     '''
     Create and link stages of the pipeline
     '''
-    global bytePrinter
-    global byteGenerator
-    global transport0
-    global transport1
-    global bytePhy0
-    global bytePhy1
-    global packetPhy0
-    global packetPhy1
-    
     bytePrinter = BytePrinter()
     byteGenerator = ByteGenerator()
     transport0 = Transport("transport0")
@@ -578,6 +569,8 @@ def initPipeline(configurationStr):
     else:
         logger.error("Pipeline configuration is not supported {0}".format(configurationStr))
         exit(-1)
+        
+    return (byteGenerator, bytePrinter)
 
 
 def startPipeline():
@@ -600,7 +593,7 @@ if __name__ == '__main__':
         
     configurationStr = arguments['--stages']
 
-    initPipeline(configurationStr)
+    (byteGenerator, bytePrinter) = initPipeline(configurationStr)
     startPipeline()        
         
     # Enter main command loop 
