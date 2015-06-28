@@ -17,7 +17,6 @@ Examples:
 """
 
 import cmd
-from docopt import docopt
 import logging
 from collections import namedtuple
 from time import sleep
@@ -29,6 +28,11 @@ import sys, traceback
 import os
 import re
 
+try:
+    from docopt import docopt
+except:
+    print "docopt is required to run this script"
+    print "Command 'apt-get install python-docopt' can help"
 
 
 NamedListener = namedtuple("NamedListener", ['name', 'callback'])
@@ -458,7 +462,13 @@ if __name__ == '__main__':
         exit(-1)
         
 
-    for c in configurationStr:
+    if (configurationStr == "GTBBTR"):
+    elif (configurationStr == "GTPPTR"):
+    elif (configurationStr == "GTBPTR"):
+    elif (configurationStr == "GTPBTR"):
+    else:
+        logger.error("Pipeline configuration is not supported {0}".format(configurationStr))
+        exit(-1)
         
 
         
