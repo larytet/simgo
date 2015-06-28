@@ -381,7 +381,27 @@ class BytePHY(Transport):
     Get bytes, forward the bytes to the next stage
     '''
     def __init__(self, name):
+        self.lock = threading.Lock()
         self.name = name
+        self.stat = StatManager.Block(name)
+        self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink"])
+        statManager.addCounters("BytePHY", self.stat)
+
+    def tx(self, data):
+        '''
+        A data sink which forwards packets to the next stage in the pipeline
+        '''
+        self.lock.acquire()
+        self.stat.wakeups = self.stat.wakeups + 1
+        self.stat.packets = self.stat.packets + 1
+        packetLen = len(data)
+        self.stat.bytes = self.stat.bytes + packetLen
+        self.lock.release()
+        
+        if (self.nextStage != None):
+            self.nextStage.tx(data)
+        else:
+            self.stat.noSink = self.stat.noSink + 1
 
  
 class cmdGroundLevel(cmd.Cmd):
