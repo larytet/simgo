@@ -247,7 +247,6 @@ class BytePrinter(PipelineStage):
     Prints the incoming data
     '''
     def __init__(self):
-        super(BytePrinter, self).__init__()
         self.lock = threading.Lock()
         self.stat = StatManager.Block("")
         self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
@@ -272,7 +271,6 @@ class Transport(PipelineStage):
     Second stage of the pipeline
     '''
     def __init__(self, name):
-        super(Transport, self).__init__()
         self.lock = threading.Lock()
         self.name = name
         self.stat = StatManager.Block(name)
@@ -300,7 +298,6 @@ class PacketPHY(PipelineStage):
     Packet PHY pipeline stage 
     '''
     def __init__(self, name, minimumPacketSize=10):
-        super(PacketPHY, self).__init__()
         self.minimumPacketSize = minimumPacketSize
         self.name = name
         self.lock = threading.Lock()
@@ -382,7 +379,7 @@ class BytePHY(Transport):
     Get bytes, forward the bytes to the next stage
     '''
     def __init__(self, name):
-        super(BytePHY, self).__init__()
+        self.name = name
 
  
 class cmdGroundLevel(cmd.Cmd):
