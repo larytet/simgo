@@ -65,6 +65,18 @@ def bytesToHexString(data):
         s = s + "{0}".format(buildhexstring(c, 2)) + " "
     return s
 
+def convertToFloat(s):
+    '''
+    String to float, handle exception
+    '''
+    value = None;
+    try:
+        value = float(s)
+        result = True;
+    except:
+        logger.error("Bad formed number '{0}'".format(s));
+        result = False;
+    return (result, value);
 
 
 class StatManager:
@@ -510,7 +522,7 @@ if __name__ == '__main__':
     configurationStr = arguments['--stages']
         
     bytePrinter = BytePrinter()
-    byteGenerator = ByteGenerator(7, 0.4)
+    byteGenerator = ByteGenerator()
     transport0 = Transport("transport0")
     transport1 = Transport("transport1")
     byteGenerator.setNext(transport0)
