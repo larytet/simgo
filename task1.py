@@ -597,7 +597,7 @@ if __name__ == '__main__':
     initPipeline(configurationStr)
     startPipeline()        
         
-    # Enter main command loop if interactive mode is enabled
+    # Enter main command loop 
     c = cmdGroundLevel()
     c.init(byteGenerator, bytePrinter)
     while (True):
