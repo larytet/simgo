@@ -165,9 +165,9 @@ class PipelineStage():
     '''
     A stage of the pipeline
     '''
-    def __init__(self):
+    def __init__(self, name):
         self.nextStage = None
-        pass
+        self.name = name
 
     def setNext(self, nextStage):
         '''
@@ -182,6 +182,9 @@ class PipelineStage():
         '''
         logger.error("Method tx() is called for the abstract Sink");
         pass
+    
+    def getName(self):
+        return self.name
         
     
 class ByteGenerator(threading.Thread, PipelineStage):
@@ -356,7 +359,7 @@ class cmdGroundLevel(cmd.Cmd):
         pass
         
     def help_status(self):
-        print "Print systems status, like last commands, last used address, connection state"
+        print "Print systems status, like list of layers"
         print "Usage:status [brief|full]"
 
     def do_exit(self, line):
