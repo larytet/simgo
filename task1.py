@@ -293,13 +293,13 @@ class BytePrinter(PipelineStage):
         A data sink which prints bytes. This method is reentrant
         '''
         dataStr = bytesToHexString(packet)
+        packetLen = len(packet)
 
         self.lock.acquire()
         if (self.printEnabled):
             print dataStr   
         self.stat.wakeups = self.stat.wakeups + 1
         self.stat.packets = self.stat.packets + 1
-        packetLen = len(packet)
         self.stat.bytes = self.stat.bytes + packetLen
         self.lock.release()
         
@@ -330,10 +330,11 @@ class Transport(PipelineStage):
         '''
         A data sink which forwards packets to the next stage in the pipeline
         '''
+        packetLen = len(data)
+        
         self.lock.acquire()
         self.stat.wakeups = self.stat.wakeups + 1
         self.stat.packets = self.stat.packets + 1
-        packetLen = len(data)
         self.stat.bytes = self.stat.bytes + packetLen
         self.lock.release()
         
@@ -441,10 +442,11 @@ class BytePHY(Transport):
         '''
         A data sink which forwards packets to the next stage in the pipeline
         '''
+        packetLen = len(data)
+
         self.lock.acquire()
         self.stat.wakeups = self.stat.wakeups + 1
         self.stat.packets = self.stat.packets + 1
-        packetLen = len(data)
         self.stat.bytes = self.stat.bytes + packetLen
         self.lock.release()
         
