@@ -203,7 +203,7 @@ class PipelineStage():
     '''
     def __init__(self):
         self.nextStage = None
-        self.name = name
+        self.name = None
 
     def setNext(self, nextStage):
         '''
