@@ -461,11 +461,41 @@ if __name__ == '__main__':
         logger.error("Please configure the pipeline, for example, GTPBTR")
         exit(-1)
         
+    bytePrinter = BytePrinter()
+    byteGenerator = ByteGenerator()
+    transport0 = Transport("transport0")
+    transport1 = Transport("transport1")
+    byteGenerator.setNext(transport0)
+    transport1.setNext(bytePrinter)
 
     if (configurationStr == "GTBBTR"):
+        bytePhy0 = BytePhy("bytePhy0")
+        bytePhy1 = BytePhy("bytePhy1")
+        transport0.setNext(bytePhy0)
+        bytePhy0.setNext(bytePhy1)
+        bytePhy1.setNext(transport1)
+        
     elif (configurationStr == "GTPPTR"):
+        packetPhy0 = PacketPHY("packetPhy0")
+        packetPhy1 = PacketPHY("packetPhy1")
+        transport0.setNext(packetPhy0)
+        packetPhy0.setNext(packetPhy1)
+        packetPhy1.setNext(transport1)
+
     elif (configurationStr == "GTBPTR"):
+        bytePhy0 = BytePhy("bytePhy0")
+        packetPhy0 = PacketPHY("packetPhy0")
+        transport0.setNext(bytePhy0)
+        bytePhy0.setNext(packetPhy0)
+        packetPhy0.setNext(transport1)
+        
     elif (configurationStr == "GTPBTR"):
+        bytePhy0 = BytePhy("bytePhy0")
+        packetPhy0 = PacketPHY("packetPhy0")
+        transport0.setNext(packetPhy0)
+        packetPhy0.setNext(bytePhy0)
+        bytePhy0.setNext(transport1)
+        
     else:
         logger.error("Pipeline configuration is not supported {0}".format(configurationStr))
         exit(-1)
