@@ -13,7 +13,15 @@ Options:
   --stages=<STR>     Configure the pipeline.
   
 Examples:
-  ./task1.py pipeline --stages GTPBTR # configures Byte Generator -> Transport -> PacketPHY -> BytePHY -> Transport -> Byte Printer  
+   # Configure Byte Generator -> Transport -> PacketPHY -> BytePHY -> Transport -> Byte Printer
+  ./task1.py pipeline --stages GTPBTR
+  
+   # Configure Byte Generator -> Transport -> BytePHY -> BytePHY -> Transport -> Byte Printer
+  ./task1.py pipeline --stages GTBBTR
+  
+  Also:
+  ./task1.py pipeline --stages GTPPTR
+  ./task1.py pipeline --stages GTBPTR
 """
 
 import cmd
