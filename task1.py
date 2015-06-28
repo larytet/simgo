@@ -212,6 +212,7 @@ class ByteGenerator(threading.Thread, PipelineStage):
         self.stat = StatManager.Block("")
         self.stat.addFieldsInt(["wakeups", "packets", "bytes", "zeroPackets", "noSink"])
         statManager.addCounters("ByteGenerator", self.stat)
+        self.exitFlag = False
         
     def run(self):
         '''
@@ -219,8 +220,8 @@ class ByteGenerator(threading.Thread, PipelineStage):
         '''
         while (not self.exitFlag):
             time.sleep(self.period)
-            packetSize = randint(0, self.maximumBurstSize)
-            packet = os.urandom()
+            packetSize = random.randint(0, self.maximumBurstSize)
+            packet = os.urandom(packetSize)
             self.stat.wakeups = self.stat.wakeups + 1
             packetLen = len(packet)
             if (packetLen > 0):
