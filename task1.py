@@ -202,9 +202,9 @@ class PipelineStage():
     A stage of the pipeline
     A pipeline stage has a name, reference to the next stage
     '''
-    def __init__(self):
+    def __init__(self, name):
         self.nextStage = None
-        self.name = None
+        self.name = name
 
     def setNext(self, nextStage):
         '''
@@ -238,11 +238,12 @@ class ByteGenerator(threading.Thread, PipelineStage):
         @param period - sleep time between the burst  
         '''
         super(ByteGenerator, self).__init__()
+        PipelineStage.__init__(self, "ByteGenerator")
         self.maximumBurstSize, self.period = maximumBurstSize, period
         
         self.stat = StatManager.Block("")
         self.stat.addFieldsInt(["wakeups", "packets", "bytes", "zeroPackets", "noSink"])
-        statManager.addCounters("ByteGenerator", self.stat)
+        statManager.addCounters(self.name, self.stat)
         self.exitFlag = False
         
     def run(self):
@@ -283,10 +284,11 @@ class BytePrinter(PipelineStage):
     Prints the incoming data
     '''
     def __init__(self):
+        PipelineStage.__init__(self, "BytePrinter")
         self.lock = threading.Lock()
         self.stat = StatManager.Block("")
         self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
-        statManager.addCounters("BytePrinter", self.stat)
+        statManager.addCounters(self.name, self.stat)
         self.printEnabled = True
 
     def tx(self, packet):
@@ -321,8 +323,8 @@ class Transport(PipelineStage):
     Second stage of the pipeline
     '''
     def __init__(self, name):
+        PipelineStage.__init__(self, name)
         self.lock = threading.Lock()
-        self.name = name
         self.stat = StatManager.Block(name)
         self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink"])
         statManager.addCounters("Transport", self.stat)
@@ -351,8 +353,8 @@ class PacketPHY(PipelineStage):
     or timeout expires 
     '''
     def __init__(self, name, minimumPacketSize=10, timeout=1.0):
+        PipelineStage.__init__(self, name)
         self.minimumPacketSize = minimumPacketSize
-        self.name = name
         self.timeout = timeout
         self.lock = threading.Lock()
         self.stat = StatManager.Block(name)
@@ -433,14 +435,13 @@ class PacketPHY(PipelineStage):
         if (self.txTimer):
             self.txTimer.cancel()
 
-class BytePHY(Transport):
+class BytePHY(PipelineStage):
     '''
     Get bytes, forward the bytes to the next stage
     '''
     def __init__(self, name):
+        PipelineStage.__init__(self, name)
         self.lock = threading.Lock()
-        self.name = name
-        self.nextStage = None
         self.stat = StatManager.Block(name)
         self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink"])
         statManager.addCounters("BytePHY", self.stat)
