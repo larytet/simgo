@@ -62,3 +62,17 @@ After all of the above is ready, it should be easy to create and test the follow
 
 4. byte generator -> transport -> packet physical -> byte physical -> transport -> byte printer
 
+5. Example of execution:
+
+-------------
+
+Configure Byte Generator -> Transport -> PacketPHY -> BytePHY -> Transport -> Byte Printer
+./task1.py pipeline --stages GTPBTR
+  
+Configure Byte Generator -> Transport -> BytePHY -> BytePHY -> Transport -> Byte Printer
+./task1.py pipeline --stages GTBBTR
+  
+Also:
+  ./task1.py pipeline --stages GTPPTR
+  ./task1.py pipeline --stages GTBPTR
+
