@@ -18,15 +18,11 @@ Examples:
 
 import cmd
 import logging
-from collections import namedtuple
 from time import sleep
 import threading
-import subprocess
-import serial, random, time
+import random, time
 
-import sys, traceback
 import os
-import re
 
 try:
     from docopt import docopt
@@ -34,8 +30,6 @@ except:
     print "docopt is required to run this script"
     print "On Ubuntu try 'apt-get install python-docopt'"
 
-
-NamedListener = namedtuple("NamedListener", ['name', 'callback'])
 
 def buildhexstring(value, width=0, prefix=''):
     valueStr = hex(value)
