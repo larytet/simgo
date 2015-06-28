@@ -32,6 +32,10 @@ except:
 
 
 def buildhexstring(value, width=0, prefix=''):
+    '''
+    Get an integer, return a formatted string 
+    For example if value is 0x1E55, widht=8 will retun 0x00001E55  
+    '''
     valueStr = hex(value)
     valueStr = valueStr.lstrip("0x")
     valueStr = valueStr.rstrip("L")
@@ -253,9 +257,7 @@ class BytePrinter(PipelineStage):
         '''
         A data sink which prints bytes. This method is reentrant
         '''
-        dataStr = [] 
-        for b in packet:
-            dataStr.append(buildhexstring(b))
+        dataStr = bytesToHexString(packet)
 
         self.lock.acquire()
         if (self.printEnabled):
