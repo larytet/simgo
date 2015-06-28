@@ -161,20 +161,20 @@ class StatManager:
 
 statManager = StatManager()
 
-class Sink():
+class PipelineStage():
     '''
-    Data sink - a stage of the pipeline
+    A stage of the pipeline
     '''
     def __init__(self):
-        self.sink = None
+        self.nextStage = None
         pass
 
-    def setSink(self, sink):
+    def setNext(self, nextStage):
         '''
         Set sink where to send the randomly generated packets
         @param sink is an object which contains method tx()
         '''    
-        self.sink = sink
+        self.nextStage = nextStage
         
     def tx(self, packet):
         '''
@@ -184,9 +184,9 @@ class Sink():
         pass
         
     
-class ByteGenerator(threading.Thread, Sink):
+class ByteGenerator(threading.Thread, PipelineStage):
     '''
-    First stage of the data pipeline
+    Feeds bytes to the First stage of the data pipeline
     Wake up periodically and generate a packet of data
     A packet length and payload are random numbers  
     '''
@@ -224,7 +224,7 @@ class ByteGenerator(threading.Thread, Sink):
     def cancel(self):
         self.exitFlag = True
 
-class BytePrinter(Sink):
+class BytePrinter(PipelineStage):
     '''
     Last stage of the data pipeline
     Implements "sink" method which prints the incoming data
@@ -248,13 +248,10 @@ class BytePrinter(Sink):
         packetLen = len(self.stat.packets)
         self.stat.bytes = self.stat.bytes + packetLen
         self.lock.release()
-        
-        if (self.sink != None):
-            sink.tx(packet)
 
-class Transport(Sink):
+class Transport(PipelineStage):
     '''
-    Implements "sink" method which prints the incoming data
+    Second stage of the pipeline
     '''
     def __init__(self, name):
         self.lock = threading.Lock()
