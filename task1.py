@@ -233,8 +233,8 @@ class ByteGenerator(threading.Thread, PipelineStage):
     '''
     def __init__(self, maximumBurstSize=7, period=0.4):
         '''
-        @param maximumBurstSize - maximum packet size to generate, the length is random
-        @param period - sleep time between the packets  
+        @param maximumBurstSize - maximum burst size to generate, the length is random
+        @param period - sleep time between the burst  
         '''
         super(ByteGenerator, self).__init__()
         self.maximumBurstSize, self.period = maximumBurstSize, period
