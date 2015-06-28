@@ -85,7 +85,7 @@ class StatManager:
     '''
     A single place where references to all blocks of debug counters are stored
     All system statistics is divided by groups, for example a group of ETH counters
-    Every group can contain zero or more blocks (eth0, eth1, ...)
+    Every group contains zero or more blocks (eth0, eth1, ...)
     Every block contains zero or more debug counters
     A debug counter is usually an integer or any printable object  
     '''
