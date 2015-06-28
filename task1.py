@@ -387,11 +387,11 @@ class cmdGroundLevel(cmd.Cmd):
     Interactive command line interface 
     '''
     
-    def init(self, simgoEngine, cmdLoop):
+    def init(self, byteGenerator):
         '''
         I can not subclass old style class
         '''
-        self.simgoEngine, self.cmdLoop = simgoEngine, cmdLoop
+        self.byteGenerator = byteGenerator
 
     def emptyline(self):
         '''
@@ -445,7 +445,7 @@ class cmdGroundLevel(cmd.Cmd):
         self.closeAll()
 
     def closeAll(self):
-        simgo.cancel()
+        byteGenerator.cancel()
         return exit(0)
     
 if __name__ == '__main__':
@@ -501,9 +501,11 @@ if __name__ == '__main__':
         exit(-1)
         
 
+    byteGenerator.start()
         
     # Enter main command loop if interactive mode is enabled
     c = cmdGroundLevel()
+    c.init(byteGenerator)
     while (True):
         try:
             c.cmdloop()
