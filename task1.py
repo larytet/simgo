@@ -32,7 +32,7 @@ try:
     from docopt import docopt
 except:
     print "docopt is required to run this script"
-    print "Command 'apt-get install python-docopt' can help"
+    print "On Ubuntu try 'apt-get install python-docopt'"
 
 
 NamedListener = namedtuple("NamedListener", ['name', 'callback'])
