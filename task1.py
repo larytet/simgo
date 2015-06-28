@@ -205,7 +205,12 @@ class Sound:
 
 beepSound = Sound()
 
-
+class ByteGenerator(threading.Thread):
+    '''
+    Wake up periodically and generate a packet of data 
+    '''
+    def __init__(self, maximumPacketSize=7, period=0.4):
+        self.maximumPacketSize = maximumPacketSize
 '''
 List of commands which will not be repeated when entering an empty line
 '''
