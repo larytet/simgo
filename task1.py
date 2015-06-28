@@ -37,6 +37,7 @@ try:
 except:
     print "docopt is required to run this script"
     print "On Ubuntu try 'apt-get install python-docopt'"
+    exit(-1)
 
 
 def buildhexstring(value, width=0, prefix=''):
