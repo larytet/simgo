@@ -380,8 +380,6 @@ class PacketPHY(PipelineStage):
 
         self.lock.release()
         
-        
-        
     def _startTimer(self):
         '''
         Start timer on the first arriving byte
@@ -464,14 +462,15 @@ class cmdGroundLevel(cmd.Cmd):
     
     def init(self, byteGenerator, bytePrinter):
         '''
-        I can not subclass old style class
+        I can not subclass old style class. This is a limitation of
+        the cmd package
         '''
         self.byteGenerator = byteGenerator
         self.bytePrinter = bytePrinter
 
     def emptyline(self):
         '''
-        If empty line repeat last sent command, unless this is run
+        If empty line repeat last sent command
         '''
         
         lastcmd = self.lastcmd
