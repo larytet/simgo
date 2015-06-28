@@ -208,7 +208,7 @@ class PipelineStage():
 
     def setNext(self, nextStage):
         '''
-        Set sink where to send the randomly generated packets
+        Set next stage of the pipeline - a "sink" where to send the packets
         @param sink is an object which contains method tx()
         '''    
         self.nextStage = nextStage
