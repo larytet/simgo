@@ -193,7 +193,7 @@ class PipelineStage():
         return self.name
         
     def setName(self, name):
-        return self.name = name
+        self.name = name
     
 class ByteGenerator(threading.Thread, PipelineStage):
     '''
@@ -233,7 +233,7 @@ class ByteGenerator(threading.Thread, PipelineStage):
         if (self.nextStage != None):
             self.stat.packets = self.stat.packets + 1
             self.stat.bytes = self.stat.bytes + packetLen
-            for (b in packet):
+            for b in packet:
                 self.nextStage.tx([b])
         else:   
             self.stat.noSink = self.stat.noSink + 1
@@ -455,11 +455,13 @@ if __name__ == '__main__':
     logging.basicConfig()    
     logger = logging.getLogger('simgo')
     logger.setLevel(logging.INFO)
-    
-    configurationStr = arguments['--pipeline']
-    if (not configurationStr):
+
+    if (not ('--pipeline' in arguments)):     
         logger.error("Please configure the pipeline, for example, GTPBTR")
         exit(-1)
+        
+    configurationStr = arguments['--pipeline']
+    if (not configurationStr):
         
     bytePrinter = BytePrinter()
     byteGenerator = ByteGenerator()
