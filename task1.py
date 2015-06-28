@@ -228,8 +228,8 @@ class PipelineStage():
 class ByteGenerator(threading.Thread, PipelineStage):
     '''
     Feeds bytes to the first stage of the data pipeline
-    Wake up periodically and generate a packet of data
-    A packet length and payload are random numbers  
+    Wake up periodically and generate a burst of data
+    The burst size and burst data are random   
     '''
     def __init__(self, maximumBurstSize=7, period=0.4):
         '''
