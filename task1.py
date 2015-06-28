@@ -225,7 +225,7 @@ class ByteGenerator(threading.Thread, PipelineStage):
             self.stat.wakeups = self.stat.wakeups + 1
             packetLen = len(packet)
             if (packetLen > 0):
-                _sendBytes(packet, packetLen)
+                self._sendBytes(packet, packetLen)
             else:
                 self.stat.zeroPackets = self.stat.zeroPackets + 1
                 
@@ -290,7 +290,7 @@ class Transport(PipelineStage):
         self.lock.release()
         
         if (self.nextStage != None):
-            sink.tx(data)
+            self.nextStage.tx(data)
         else:
             self.stat.noSink = self.stat.noSink + 1
 
@@ -303,6 +303,7 @@ class PacketPHY(PipelineStage):
         self.name = name
         self.lock = threading.Lock()
         self.stat = StatManager.Block(name)
+        self.txTimer = None
         
         self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink", "timerStarted", "timerExpired", "timerCanceled"])
         statManager.addCounters("Transport", self.stat)
