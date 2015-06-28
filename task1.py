@@ -56,7 +56,7 @@ def bytesToHexString(data):
 
 class StatManager:
     '''
-    A single place where references to all blocks off debug counters is stored
+    A single place where references to all blocks of debug counters are stored
     '''
     def __init__(self):
         self.groups = {}
@@ -204,6 +204,7 @@ class Sound:
         threading.Thread(target=self.playSoundThread, args=([None])).start()    
 
 beepSound = Sound()
+
 
 '''
 List of commands which will not be repeated when entering an empty line
