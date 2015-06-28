@@ -266,7 +266,7 @@ class BytePrinter(PipelineStage):
         print dataStr
         self.stat.wakeups = self.stat.wakeups + 1
         self.stat.packets = self.stat.packets + 1
-        packetLen = len(self.stat.packets)
+        packetLen = len(packet)
         self.stat.bytes = self.stat.bytes + packetLen
         self.lock.release()
 
