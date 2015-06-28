@@ -49,7 +49,8 @@ def buildhexstring(value, width=0, prefix=''):
 
 def bytesToHexString(data):
     '''
-    Convert array [0x30, 0x31] to string "30 31"
+    Convert an array of byutes to string 
+    For example will convert [0x30, 0x31] to string "30 31"
     '''
     s = ""
     for c in data:
