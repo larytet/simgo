@@ -161,49 +161,6 @@ class StatManager:
 
 statManager = StatManager()
 
-class Sound:
-    def __init__(self):
-        self.lock = threading.Lock()
-        self.__canceled = False
-        self.__disabled = False
-        self.__running = False
-        
-    def cancel(self):
-        self.__canceled = True
-
-    def disable(self):
-        self.__disabled = True
-
-    def playSoundThread(self, args):
-        '''
-        Sometime ALSA returns error 
-        /usr/bin/play WARN alsa: under-run
-        '''
-        
-        if (self.__canceled or self.__disabled or self.__running):
-            return
-        
-        self.lock.acquire()
-        
-        self.__running = True
-        
-        for _ in range(10):
-            if (self.__canceled or self.__disabled):
-                break
-            os.system("/usr/bin/play --no-show-progress --null --channels 1 synth 0.05 sine 400")
-            
-        self.__running = False
-        
-        self.lock.release()
-
-    def playSound(self):
-        '''
-        Execute system 'beep' in the backgorund
-        '''
-        self.__canceled = False
-        threading.Thread(target=self.playSoundThread, args=([None])).start()    
-
-beepSound = Sound()
 
 class ByteGenerator(threading.Thread):
     '''
@@ -215,7 +172,34 @@ class ByteGenerator(threading.Thread):
         @param maximumPacketSize - maximum packet size to generate, the length is random
         @param period - sleep time between the packets  
         '''
-        self.maximumPacketSize = maximumPacketSize
+        self.maximumPacketSize, self.period = maximumPacketSize, period
+        self.sink = None
+        
+        self.stat = StatManager.Block("")
+        self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
+        statManager.addCounters("ByteGenerator", self.stat)
+        
+    def setSink(self, sink):
+        '''
+        Set sink where to send the randomly generated packets
+        '''    
+        self.sink = sink
+    
+    def run(self):
+        '''
+        Wake, generate a packet, go to sleep
+        '''
+        while (not self.exitFlag):
+            time.sleep(self.period)
+            packetSize = randint(0, self.maximumPacketSize)
+            packet = os.urandom()
+            if (sink != None):
+                sink.send(packet)   
+                
+        
+    def cancel(self):
+        self.exitFlag = True
+        
 '''
 List of commands which will not be repeated when entering an empty line
 '''
@@ -270,18 +254,6 @@ class cmdGroundLevel(cmd.Cmd):
 
         self.onecmd(lastcmd.strip())
 
-    def precmd(self, line):
-        '''
-        Handle simple scripts - single line which contains commands separated by ';'
-        '''
-        if (";" in line):
-            commands = line.split(";")
-            for command in commands:
-                if (command != ""):
-                    self.onecmd(command)
-            return "none"
-        else:
-            return line
               
     def do_none(self, line):
         pass
@@ -298,52 +270,27 @@ class cmdGroundLevel(cmd.Cmd):
         print "Usage:sleep secs"
         print "Example:sleep 0.1"
         
+
+    def do_statistics(self, line):
+        statManager.printAll()
+
+    def help_statistics(self):
+        print "Print debug statistics"
       
     def do_status(self, line):
         pass
         
-            
-        
     def help_status(self):
         print "Print systems status, like last commands, last used address, connection state"
         print "Usage:status [brief|full]"
-    
 
     def do_exit(self, line):
         self.closeAll()
         
     def do_quit(self, line):
         self.closeAll()
-    BEEP_COMMANDS_TEST = ['test', 'start']
-        
-    BEEP_COMMANDS_CANCEL = ['cancel', 'exit', 'stop']
-    BEEP_COMMANDS_COMPLETION = ['cancel', 'test']
-    def do_beep(self, command):
-        '''
-        beep [cancel|test]
-        '''        
-        if ((command in self.BEEP_COMMANDS_TEST) or (not command)):
-            beepSound.playSound()
-        elif (command in self.BEEP_COMMANDS_CANCEL):
-            beepSound.cancel()
-        
-    def complete_beep(self, text, line, begidx, endidx):
-        if (not text):
-            completions = self.BEEP_COMMANDS_COMPLETION[:]
-        else:
-            completions = []
-            for f in self.BEEP_COMMANDS_COMPLETION:
-                if (f.startswith(text)):
-                    completions.append(f)
-
-        return completions
-
-    def help_beep(self):
-        print "Test system beep"
-        print "Usage: beep [test|start|cancel|exit|stop]"
 
     def closeAll(self):
-        beepSound.disable()
         simgo.cancel()
         return exit(0)
     
