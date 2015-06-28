@@ -161,9 +161,32 @@ class StatManager:
 
 statManager = StatManager()
 
-
-class ByteGenerator(threading.Thread):
+class Sink():
     '''
+    Data sink - a stage of the pipeline
+    '''
+    def __init__(self):
+        self.sink = None
+        pass
+
+    def setSink(self, sink):
+        '''
+        Set sink where to send the randomly generated packets
+        @param sink is an object which contains method tx()
+        '''    
+        self.sink = sink
+        
+    def tx(self, packet):
+        '''
+        Do nothing in the base class
+        '''
+        logger.error("Method tx() is called for the abstract Sink");
+        pass
+        
+    
+class ByteGenerator(threading.Thread, Sink):
+    '''
+    First stage of the data pipeline
     Wake up periodically and generate a packet of data
     A packet length and payload are random numbers  
     '''
@@ -173,18 +196,11 @@ class ByteGenerator(threading.Thread):
         @param period - sleep time between the packets  
         '''
         self.maximumPacketSize, self.period = maximumPacketSize, period
-        self.sink = None
         
         self.stat = StatManager.Block("")
         self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
         statManager.addCounters("ByteGenerator", self.stat)
         
-    def setSink(self, sink):
-        '''
-        Set sink where to send the randomly generated packets
-        '''    
-        self.sink = sink
-    
     def run(self):
         '''
         Wake, generate a packet, go to sleep
@@ -193,30 +209,70 @@ class ByteGenerator(threading.Thread):
             time.sleep(self.period)
             packetSize = randint(0, self.maximumPacketSize)
             packet = os.urandom()
-            self.stat.packets = self.stat.packets + 1
-            self.stat.bytes = self.stat.bytes + len(self.stat.packets)
-            if (sink != None):
-                sink.send(packet)   
+            self.stat.wakeups = self.stat.wakeups + 1
+            packetLen = len(self.stat.packets)
+            if (packetLen > 0):
+                self.stat.packets = self.stat.packets + 1
+                self.stat.bytes = self.stat.bytes + packetLen
+                if (sink != None):
+                    sink.tx(packet)   
                 
         
     def cancel(self):
         self.exitFlag = True
 
-class BytePrinter():
-    
+class BytePrinter(Sink):
+    '''
+    Last stage of the data pipeline
+    Implements "sink" method which prints the incoming data
+    '''
     def __init__(self):
         self.lock = threading.Lock()
         self.stat = StatManager.Block("")
         self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
         statManager.addCounters("BytePrinter", self.stat)
 
-    '''
-    A data sink which prints bytes
-    '''
-    def sink(self, packet):
+    def tx(self, packet):
+        '''
+        A data sink which prints bytes. This method is reentrant
+        '''
         s = bytesToHexString(packet)
+
         self.lock.acquire()
         print s
+        self.stat.wakeups = self.stat.wakeups + 1
+        self.stat.packets = self.stat.packets + 1
+        packetLen = len(self.stat.packets)
+        self.stat.bytes = self.stat.bytes + packetLen
+        self.lock.release()
+        
+        if (self.sink != None):
+            sink.tx(packet)
+
+class Transport(Sink):
+    '''
+    Implements "sink" method which prints the incoming data
+    '''
+    def __init__(self, name):
+        self.lock = threading.Lock()
+        self.name = name
+        self.lock = threading.Lock()
+        self.stat = StatManager.Block(name)
+        self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
+        statManager.addCounters("Transport", self.stat)
+        self.sink = None
+    
+    
+
+    def tx(self, packet):
+        '''
+        A data sink which forwards packets to the next sink in the pipeline
+        '''
+        self.lock.acquire()
+        self.stat.wakeups = self.stat.wakeups + 1
+        self.stat.packets = self.stat.packets + 1
+        packetLen = len(self.stat.packets)
+        self.stat.bytes = self.stat.bytes + packetLen
         self.lock.release()
         
         
