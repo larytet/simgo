@@ -307,14 +307,17 @@ class PacketPHY(PipelineStage):
         A data sink which collects bytes and sends packets to the next stage
         '''
         self.lock.acquire()
+        
         self.stat.wakeups = self.stat.wakeups + 1
         
+        # Start timer on the first arriving byte
         self._startTimer()
 
         self.collectedData.append(data)
         packetLen = len(self.collectedData)
         if (packetLen > minimumPacketSize):
             self._sendBytes(self.collectedData, packetLen)
+
         self.lock.release()
         
         
@@ -322,21 +325,26 @@ class PacketPHY(PipelineStage):
     def _startTimer(self):
         '''
         Start timer on the first arriving byte
+        Cancel the timer if running
         '''
         if (self.txTimer):
             self.txTimer.cancel()
             self.stat.timerCanceled = self.stat.timerCanceled + 1
 
         if (len(self.collectedData) == 0): 
-            self.txTimer = threading.Timer(1.0)
+            self.txTimer = threading.Timer(1.0, timeoutExpired)
             self.stat.timerStarted = self.stat.timerStarted + 1
-        
+
             
-    def _timeoutExpired(self):
+    def timeoutExpired(self):
+        self.lock.acquire()
+        
         self.stat.timerExpired = self.stat.timerExpired + 1
         packetLen = len(self.collectedData)
         if (packetLen > 0):
             self._sendBytes(self.collectedData, packetLen)
+            
+        self.lock.release()
         
         
     def _sendBytes(self, packet, packetLen):
@@ -354,9 +362,11 @@ class PacketPHY(PipelineStage):
             
     def _flushData(self):
         '''
-        Drop all collected data
+        Drop all collected data, stop timer
         '''
         self.collectedData = []
+        if (self.txTimer):
+            self.txTimer.cancel()
  
 class cmdGroundLevel(cmd.Cmd):
     '''
