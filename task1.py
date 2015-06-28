@@ -5,15 +5,15 @@
 Usage:
   task1.py -h | --help
   task1.py --version
-  task1.py [--piepeline=<STR>]   
+  task1.py pipeline --stages=<STR>   
 
 Options:
   -h --help            Show this screen.
   --version            Show version.
-  --pipeline           Configure the pipeline.
+  --stages=<STR>     Configure the pipeline.
   
 Examples:
-  ./task1.py --pipeline GTPBTR # configures Byte Generator -> Transport -> PacketPHY -> BytePHY -> Transport -> Byte Printer  
+  ./task1.py pipeline --stages GTPBTR # configures Byte Generator -> Transport -> PacketPHY -> BytePHY -> Transport -> Byte Printer  
 """
 
 import cmd
@@ -456,11 +456,11 @@ if __name__ == '__main__':
     logger = logging.getLogger('simgo')
     logger.setLevel(logging.INFO)
 
-    if (not ('--pipeline' in arguments)):     
-        logger.error("Please configure the pipeline, for example, GTPBTR")
+    if (not ('--stages' in arguments)):     
+        logger.error("Please configure the pipeline, for example, --pipeline GTPBTR")
         exit(-1)
         
-    configurationStr = arguments['--pipeline']
+    configurationStr = arguments['--stages']
         
     bytePrinter = BytePrinter()
     byteGenerator = ByteGenerator()
