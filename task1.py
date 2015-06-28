@@ -205,6 +205,8 @@ class PipelineStage():
     def __init__(self, name):
         self.nextStage = None
         self.name = name
+        # all stages need a lock
+        self.lock = threading.Lock()
 
     def setNext(self, nextStage):
         '''
@@ -285,7 +287,6 @@ class BytePrinter(PipelineStage):
     '''
     def __init__(self):
         PipelineStage.__init__(self, "BytePrinter")
-        self.lock = threading.Lock()
         self.stat = StatManager.Block("")
         self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
         statManager.addCounters(self.name, self.stat)
@@ -324,7 +325,6 @@ class Transport(PipelineStage):
     '''
     def __init__(self, name):
         PipelineStage.__init__(self, name)
-        self.lock = threading.Lock()
         self.stat = StatManager.Block(name)
         self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink"])
         statManager.addCounters("Transport", self.stat)
@@ -356,7 +356,6 @@ class PacketPHY(PipelineStage):
         PipelineStage.__init__(self, name)
         self.minimumPacketSize = minimumPacketSize
         self.timeout = timeout
-        self.lock = threading.Lock()
         self.stat = StatManager.Block(name)
         self.txTimer = None
         
@@ -441,7 +440,6 @@ class BytePHY(PipelineStage):
     '''
     def __init__(self, name):
         PipelineStage.__init__(self, name)
-        self.lock = threading.Lock()
         self.stat = StatManager.Block(name)
         self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink"])
         statManager.addCounters("BytePHY", self.stat)
