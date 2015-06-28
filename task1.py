@@ -214,9 +214,12 @@ class ByteGenerator(threading.Thread, Sink):
             if (packetLen > 0):
                 self.stat.packets = self.stat.packets + 1
                 self.stat.bytes = self.stat.bytes + packetLen
-                if (sink != None):
-                    sink.tx(packet)   
+                _sendBytes(packet)
                 
+    def _sendBytes(self, packet):            
+        if (sink != None):
+            for (b in packet):
+                sink.tx(b)   
         
     def cancel(self):
         self.exitFlag = True
@@ -260,9 +263,6 @@ class Transport(Sink):
         self.stat = StatManager.Block(name)
         self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
         statManager.addCounters("Transport", self.stat)
-        self.sink = None
-    
-    
 
     def tx(self, packet):
         '''
@@ -275,6 +275,8 @@ class Transport(Sink):
         self.stat.bytes = self.stat.bytes + packetLen
         self.lock.release()
         
+        if (self.sink != None):
+            sink.tx(packet)
         
 '''
 List of commands which will not be repeated when entering an empty line
