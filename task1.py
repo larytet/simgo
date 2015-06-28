@@ -216,7 +216,7 @@ class PipelineStage():
         '''
         Do nothing in the base class
         '''
-        logger.error("Method tx() is called for the abstract Sink");
+        logger.error("Method tx() is called for the abstract pipeline stage");
         pass
     
     def getName(self):
@@ -349,9 +349,10 @@ class PacketPHY(PipelineStage):
     Collect incoming bytes, send a single packet when 10 bytes or more collected 
     or timeout expires 
     '''
-    def __init__(self, name, minimumPacketSize=10):
+    def __init__(self, name, minimumPacketSize=10, timeout=1.0):
         self.minimumPacketSize = minimumPacketSize
         self.name = name
+        self.timeout = timeout
         self.lock = threading.Lock()
         self.stat = StatManager.Block(name)
         self.txTimer = None
@@ -389,7 +390,7 @@ class PacketPHY(PipelineStage):
             if (self.txTimer):
                 self.txTimer.cancel()
                 self.stat.timerCanceled = self.stat.timerCanceled + 1
-            self.txTimer = threading.Timer(1.0, self.timeoutExpired)
+            self.txTimer = threading.Timer(self.timeout, self.timeoutExpired)
             self.txTimer.start()
             self.stat.timerStarted = self.stat.timerStarted + 1
 
