@@ -551,7 +551,6 @@ def initPipeline(configurationStr):
         bytePhy1.setNext(transport1)
         
     elif (configurationStr == "GTPPTR"):
-        bytePhy1.setNext(transport1)
         packetPhy0 = PacketPHY("packetPhy0")
         packetPhy1 = PacketPHY("packetPhy1")
         transport0.setNext(packetPhy0)
