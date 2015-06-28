@@ -311,33 +311,6 @@ class PacketPHY(PipelineStage):
         self.collectedData.append(data)
         if len(self.collectedData > )
         
-'''
-List of commands which will not be repeated when entering an empty line
-'''
-NOT_AUTO_COMMANDS = []
-
-def nonautomatic(decorator):
-    '''
-    Decorator - if used add the command to the global list NOT_AUTO_COMMANDS
-    Code below is executed before the decorated function is executed
-    '''
-    
-    def new_decorator(*arg):
-        '''
-        This function will replace the decorated function
-        Arbitrary list of arguments - usualy 'self' and 'line', but I do not care
-        '''
-        decorator(*arg)
-
-    # get the funciton name and drop leading do_
-    pattern = "do_(.+)"
-    m = re.match(pattern, decorator.__name__)
-    command = m.group(1)
-    
-    # add the function name to the black list
-    NOT_AUTO_COMMANDS.append(command)
-
-    return new_decorator
  
 class cmdGroundLevel(cmd.Cmd):
     '''
