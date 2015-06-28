@@ -120,6 +120,9 @@ class StatManager:
         group.append(block) 
 
     def __isPrintableField(self, block, fieldName):
+        '''
+        I print only counters in the block object, ignore Python internal fields
+        '''
         result = fieldName in block.ignoreFields
         return (not result)
         
