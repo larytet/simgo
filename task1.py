@@ -323,7 +323,7 @@ class PacketPHY(PipelineStage):
 
         self.collectedData.append(data)
         packetLen = len(self.collectedData)
-        if (packetLen > minimumPacketSize):
+        if (packetLen > self.minimumPacketSize):
             self._sendBytes(self.collectedData, packetLen)
 
         self.lock.release()
