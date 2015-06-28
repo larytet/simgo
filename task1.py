@@ -304,9 +304,15 @@ class BytePrinter(PipelineStage):
         self.lock.release()
         
     def enable(self, flag):
+        '''
+        Toggle printing On/Off
+        '''
         self.printEnabled = flag
 
     def isEnabled(self):
+        '''
+        Get currect state of the printEnabled flag
+        '''
         return self.printEnabled
         
 class Transport(PipelineStage):
