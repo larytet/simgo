@@ -261,7 +261,6 @@ class BytePrinter(PipelineStage):
         '''
         dataStr = [] 
         for b in packet:
-            print b 
             dataStr.append(buildhexstring(b))
 
         self.lock.acquire()
