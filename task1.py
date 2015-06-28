@@ -518,21 +518,17 @@ class cmdGroundLevel(cmd.Cmd):
     def closeAll(self):
         byteGenerator.cancel()
         return exit(0)
+
+def initPipeline(configurationStr):
+    global bytePrinter
+    global byteGenerator
+    global transport0
+    global transport1
+    global bytePhy0
+    global bytePhy1
+    global packetPhy0
+    global packetPhy1
     
-if __name__ == '__main__':
-
-    arguments = docopt(__doc__, version='simgo task 0.1')
-
-    logging.basicConfig()    
-    logger = logging.getLogger('simgo')
-    logger.setLevel(logging.INFO)
-
-    if (not ('--stages' in arguments)):     
-        logger.error("Please configure the pipeline, for example, pipeline --stages GTPBTR")
-        exit(-1)
-        
-    configurationStr = arguments['--stages']
-        
     bytePrinter = BytePrinter()
     byteGenerator = ByteGenerator()
     transport0 = Transport("transport0")
@@ -545,9 +541,9 @@ if __name__ == '__main__':
         bytePhy1 = BytePHY("bytePhy1")
         transport0.setNext(bytePhy0)
         bytePhy0.setNext(bytePhy1)
-        bytePhy1.setNext(transport1)
         
     elif (configurationStr == "GTPPTR"):
+        bytePhy1.setNext(transport1)
         packetPhy0 = PacketPHY("packetPhy0")
         packetPhy1 = PacketPHY("packetPhy1")
         transport0.setNext(packetPhy0)
@@ -571,9 +567,27 @@ if __name__ == '__main__':
     else:
         logger.error("Pipeline configuration is not supported {0}".format(configurationStr))
         exit(-1)
-        
 
+
+def startPipeline():
     byteGenerator.start()
+        
+if __name__ == '__main__':
+
+    arguments = docopt(__doc__, version='simgo task 0.1')
+
+    logging.basicConfig()    
+    logger = logging.getLogger('simgo')
+    logger.setLevel(logging.INFO)
+
+    if (not ('--stages' in arguments)):     
+        logger.error("Please configure the pipeline, for example, pipeline --stages GTPBTR")
+        exit(-1)
+        
+    configurationStr = arguments['--stages']
+
+    initPipeline(configurationStr)
+    startPipeline()        
         
     # Enter main command loop if interactive mode is enabled
     c = cmdGroundLevel()
