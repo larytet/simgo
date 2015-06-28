@@ -260,7 +260,8 @@ class BytePrinter(PipelineStage):
         A data sink which prints bytes. This method is reentrant
         '''
         dataStr = [] 
-        for b in packet: 
+        for b in packet:
+            print b 
             dataStr.append(buildhexstring(b))
 
         self.lock.acquire()
@@ -332,7 +333,8 @@ class PacketPHY(PipelineStage):
         # Start timer on the first arriving byte
         self._startTimer()
 
-        self.collectedData.append(data)
+        for b in data:
+            self.collectedData.append(b)
         packetLen = len(self.collectedData)
         if (packetLen > self.minimumPacketSize):
             self._sendBytes(self.collectedData, packetLen)
@@ -490,7 +492,7 @@ if __name__ == '__main__':
     logger.setLevel(logging.INFO)
 
     if (not ('--stages' in arguments)):     
-        logger.error("Please configure the pipeline, for example, --pipeline GTPBTR")
+        logger.error("Please configure the pipeline, for example, pipeline --stages GTPBTR")
         exit(-1)
         
     configurationStr = arguments['--stages']
