@@ -340,7 +340,7 @@ class PacketPHY(PipelineStage):
             self.stat.timerCanceled = self.stat.timerCanceled + 1
 
         if (len(self.collectedData) == 0): 
-            self.txTimer = threading.Timer(1.0, timeoutExpired)
+            self.txTimer = threading.Timer(1.0, self.timeoutExpired)
             self.stat.timerStarted = self.stat.timerStarted + 1
 
             
