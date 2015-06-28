@@ -439,6 +439,7 @@ class BytePHY(Transport):
     def __init__(self, name):
         self.lock = threading.Lock()
         self.name = name
+        self.nextStage = None
         self.stat = StatManager.Block(name)
         self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink"])
         statManager.addCounters("BytePHY", self.stat)
