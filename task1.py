@@ -253,6 +253,7 @@ class BytePrinter(PipelineStage):
         self.stat = StatManager.Block("")
         self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
         statManager.addCounters("BytePrinter", self.stat)
+        self.printEnabled = True
 
     def tx(self, packet):
         '''
@@ -260,16 +261,23 @@ class BytePrinter(PipelineStage):
         '''
         dataStr = [] 
         for b in packet: 
-            dataStr.append(bytesToHexString(b))
+            dataStr.append(buildhexstring(b))
 
         self.lock.acquire()
-        print dataStr
+        if (self.printEnabled):
+            print dataStr   
         self.stat.wakeups = self.stat.wakeups + 1
         self.stat.packets = self.stat.packets + 1
         packetLen = len(packet)
         self.stat.bytes = self.stat.bytes + packetLen
         self.lock.release()
+        
+    def enable(self, flag):
+        self.printEnabled = flag
 
+    def isEnable(self, flag):
+        return self.printEnabled
+        
 class Transport(PipelineStage):
     '''
     Second stage of the pipeline
@@ -412,11 +420,12 @@ class cmdGroundLevel(cmd.Cmd):
     Interactive command line interface 
     '''
     
-    def init(self, byteGenerator):
+    def init(self, byteGenerator, bytePrinter):
         '''
         I can not subclass old style class
         '''
         self.byteGenerator = byteGenerator
+        self.bytePrinter = bytePrinter
 
     def emptyline(self):
         '''
@@ -456,12 +465,11 @@ class cmdGroundLevel(cmd.Cmd):
     def help_statistics(self):
         print "Print debug statistics"
       
-    def do_status(self, line):
-        pass
+    def do_enable(self, line):
+        self.bytePrinter.enable(not self.bytePrinter.isEnabled())
         
-    def help_status(self):
-        print "Print systems status, like list of layers"
-        print "Usage:status [brief|full]"
+    def help_enable(self):
+        print "Toggle printing"
 
     def do_exit(self, line):
         self.closeAll()
@@ -531,7 +539,7 @@ if __name__ == '__main__':
         
     # Enter main command loop if interactive mode is enabled
     c = cmdGroundLevel()
-    c.init(byteGenerator)
+    c.init(byteGenerator, bytePrinter)
     while (True):
         try:
             c.cmdloop()
