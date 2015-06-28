@@ -43,7 +43,7 @@ except:
 def buildhexstring(value, width=0, prefix=''):
     '''
     Get an integer, return a formatted string 
-    For example if value is 0x1E55, widht=8 will retun "00001E55"  
+    For example if value is 0x1E55, widht=8 this function will retun "00001E55"  
     '''
     valueStr = hex(value)
     valueStr = valueStr.lstrip("0x")
@@ -84,7 +84,7 @@ def convertToFloat(s):
 class StatManager:
     '''
     A single place where references to all blocks of debug counters are stored
-    Counters divided in groups, for example a group of ETH counters
+    All system statistics is divided by groups, for example a group of ETH counters
     Every group can contain zero or more blocks (eth0, eth1, ...)
     Every block contains zero or more debug counters
     A debug counter is usually an integer or any printable object  
