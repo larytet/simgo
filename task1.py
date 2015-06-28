@@ -235,7 +235,8 @@ class ByteGenerator(threading.Thread, PipelineStage):
             self.stat.packets = self.stat.packets + 1
             self.stat.bytes = self.stat.bytes + packetLen
             for b in packet:
-                self.nextStage.tx([b])
+                dataByte = ord(b)
+                self.nextStage.tx([dataByte])
         else:   
             self.stat.noSink = self.stat.noSink + 1
         
