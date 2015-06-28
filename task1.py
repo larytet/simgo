@@ -208,7 +208,7 @@ beepSound = Sound()
 class ByteGenerator(threading.Thread):
     '''
     Wake up periodically and generate a packet of data
-    A packet lenght and payload are random numbers  
+    A packet length and payload are random numbers  
     '''
     def __init__(self, maximumPacketSize=7, period=0.4):
         '''
