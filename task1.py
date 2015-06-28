@@ -5,13 +5,15 @@
 Usage:
   task1.py -h | --help
   task1.py --version
-  task1.py [--device=<STR>] -i | --interactive  
-  task1.py run [--device=<STR>] [--filename=<STR>] [--address=<HEX>] [--interactive]  
+  task1.py [--piepeline=<STR>]   
 
 Options:
   -h --help            Show this screen.
   --version            Show version.
+  --pipeline           Configure the pipeline.
   
+Examples:
+  ./task1.py --pipeline GTPBTR # configures Byte Generator -> Transport -> PacketPHY -> BytePHY -> Transport -> Byte Printer  
 """
 
 import cmd
@@ -367,6 +369,14 @@ class PacketPHY(PipelineStage):
         self.collectedData = []
         if (self.txTimer):
             self.txTimer.cancel()
+
+class BytePHY(Transport):
+    '''
+    Get bytes, forward the bytes to the next stage
+    '''
+    def __init__(self, name):
+        super(Transport, self).__init__()
+
  
 class cmdGroundLevel(cmd.Cmd):
     '''
@@ -440,7 +450,16 @@ if __name__ == '__main__':
 
     logging.basicConfig()    
     logger = logging.getLogger('simgo')
-    logger.setLevel(logging.INFO)    
+    logger.setLevel(logging.INFO)
+    
+    configurationStr = arguments['--pipeline']
+    if (not configurationStr):
+        logger.error("Please configure the pipeline, for example, GTPBTR")
+        exit(-1)
+        
+
+    for c in configurationStr:
+        
 
         
     # Enter main command loop if interactive mode is enabled
