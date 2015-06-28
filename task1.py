@@ -371,7 +371,8 @@ class PacketPHY(PipelineStage):
         self.stat.wakeups = self.stat.wakeups + 1
         
         # Start timer on the first arriving byte
-        self._startTimer()
+        if (len(self.collectedData) == 0): 
+            self._startTimer()
 
         for b in data:
             self.collectedData.append(b)
@@ -383,16 +384,15 @@ class PacketPHY(PipelineStage):
         
     def _startTimer(self):
         '''
-        Start timer on the first arriving byte
         Cancel the timer if running
+        Start timer on the first arriving byte
         '''
-        if (len(self.collectedData) == 0): 
-            if (self.txTimer):
-                self.txTimer.cancel()
-                self.stat.timerCanceled = self.stat.timerCanceled + 1
-            self.txTimer = threading.Timer(self.timeout, self.timeoutExpired)
-            self.txTimer.start()
-            self.stat.timerStarted = self.stat.timerStarted + 1
+        if (self.txTimer):
+            self.txTimer.cancel()
+            self.stat.timerCanceled = self.stat.timerCanceled + 1
+        self.txTimer = threading.Timer(self.timeout, self.timeoutExpired)
+        self.txTimer.start()
+        self.stat.timerStarted = self.stat.timerStarted + 1
 
             
     def timeoutExpired(self):
