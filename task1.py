@@ -178,6 +178,7 @@ statManager = StatManager()
 class PipelineStage():
     '''
     A stage of the pipeline
+    A pipeline stage has a name, reference to the next stage
     '''
     def __init__(self):
         self.nextStage = None
