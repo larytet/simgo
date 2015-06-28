@@ -72,7 +72,4 @@ Configure Byte Generator -> Transport -> PacketPHY -> BytePHY -> Transport -> By
 Configure Byte Generator -> Transport -> BytePHY -> BytePHY -> Transport -> Byte Printer
 ./task1.py pipeline --stages GTBBTR
   
-Also:
-  ./task1.py pipeline --stages GTPPTR
-  ./task1.py pipeline --stages GTBPTR
 
