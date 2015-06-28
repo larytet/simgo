@@ -385,11 +385,10 @@ class PacketPHY(PipelineStage):
         Start timer on the first arriving byte
         Cancel the timer if running
         '''
-        if (self.txTimer):
-            self.txTimer.cancel()
-            self.stat.timerCanceled = self.stat.timerCanceled + 1
-
         if (len(self.collectedData) == 0): 
+            if (self.txTimer):
+                self.txTimer.cancel()
+                self.stat.timerCanceled = self.stat.timerCanceled + 1
             self.txTimer = threading.Timer(1.0, self.timeoutExpired)
             self.txTimer.start()
             self.stat.timerStarted = self.stat.timerStarted + 1
