@@ -528,6 +528,9 @@ class cmdGroundLevel(cmd.Cmd):
         return exit(0)
 
 def initPipeline(configurationStr):
+    '''
+    Create and link stages of the pipeline
+    '''
     global bytePrinter
     global byteGenerator
     global transport0
@@ -578,6 +581,9 @@ def initPipeline(configurationStr):
 
 
 def startPipeline():
+    '''
+    Start random data generator
+    '''
     byteGenerator.start()
         
 if __name__ == '__main__':
