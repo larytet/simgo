@@ -346,6 +346,8 @@ class Transport(PipelineStage):
 class PacketPHY(PipelineStage):
     '''
     Packet PHY pipeline stage 
+    Collect incoming bytes, send a single packet when 10 bytes or more collected 
+    or timeout expires 
     '''
     def __init__(self, name, minimumPacketSize=10):
         self.minimumPacketSize = minimumPacketSize
