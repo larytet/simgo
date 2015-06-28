@@ -275,7 +275,7 @@ class BytePrinter(PipelineStage):
     def enable(self, flag):
         self.printEnabled = flag
 
-    def isEnabled(self, flag):
+    def isEnabled(self):
         return self.printEnabled
         
 class Transport(PipelineStage):
@@ -317,7 +317,7 @@ class PacketPHY(PipelineStage):
         self.txTimer = None
         
         self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink", "timerStarted", "timerExpired", "timerCanceled"])
-        statManager.addCounters("Transport", self.stat)
+        statManager.addCounters("PacketPHY", self.stat)
         
         self.collectedData = []
 
