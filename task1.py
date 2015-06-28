@@ -42,7 +42,7 @@ except:
 def buildhexstring(value, width=0, prefix=''):
     '''
     Get an integer, return a formatted string 
-    For example if value is 0x1E55, widht=8 will retun 0x00001E55  
+    For example if value is 0x1E55, widht=8 will retun "00001E55"  
     '''
     valueStr = hex(value)
     valueStr = valueStr.lstrip("0x")
@@ -57,7 +57,7 @@ def buildhexstring(value, width=0, prefix=''):
 
 def bytesToHexString(data):
     '''
-    Convert an array of byutes to string 
+    Convert an array of bytes to string 
     For example will convert [0x30, 0x31] to string "30 31"
     '''
     s = ""
