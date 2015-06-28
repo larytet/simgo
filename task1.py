@@ -396,6 +396,11 @@ class PacketPHY(PipelineStage):
 
             
     def timeoutExpired(self):
+        '''
+        If timer expired send all collected data to the next stage
+        of the pipeline
+        '''
+        
         self.lock.acquire()
         
         self.stat.timerExpired = self.stat.timerExpired + 1
