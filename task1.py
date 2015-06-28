@@ -454,9 +454,6 @@ class cmdGroundLevel(cmd.Cmd):
             return
         
         words = lastcmd.split()
-        if (words[0] in NOT_AUTO_COMMANDS):
-            return
-
         self.onecmd(lastcmd.strip())
 
               
@@ -513,7 +510,7 @@ if __name__ == '__main__':
     configurationStr = arguments['--stages']
         
     bytePrinter = BytePrinter()
-    byteGenerator = ByteGenerator(1, 4.5)
+    byteGenerator = ByteGenerator(7, 0.4)
     transport0 = Transport("transport0")
     transport1 = Transport("transport1")
     byteGenerator.setNext(transport0)
