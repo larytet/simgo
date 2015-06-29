@@ -43,7 +43,11 @@ except:
 def buildhexstring(value, width=0, prefix=''):
     '''
     Get an integer, return a formatted string 
-    For example if value is 0x1E55, widht=8 this function will retun "00001E55"  
+    For example if value is 0x1E55, width=8 this function will retun "00001E55"
+    @param value: an integer to convert
+    @param width: min length of the resulting string, padded by zeros
+    @param prefix: for example '0x'
+    @return: a hexadecimal string representation of the value     
     '''
     valueStr = hex(value)
     valueStr = valueStr.lstrip("0x")
