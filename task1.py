@@ -256,7 +256,7 @@ class ByteGenerator(threading.Thread, PipelineStage):
         
     def run(self):
         '''
-        Wake, generate a packet, go to sleep
+        Wake up, generate a packet, go to sleep
         '''
         while (not self.exitFlag):
             time.sleep(self.period)
