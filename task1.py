@@ -198,7 +198,9 @@ class StatManager:
             self.printGroup(groupName)
             print
             
-
+'''
+All debug statisitcs is collected here 
+'''
 statManager = StatManager()
 
 class PipelineStage():
