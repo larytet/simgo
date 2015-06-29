@@ -387,6 +387,7 @@ class PacketPHY(PipelineStage):
         packetLen = len(self.collectedData)
         if (packetLen > self.minimumPacketSize):
             self._sendBytes(self.collectedData, packetLen)
+            self._flushData()
 
         self.lock.release()
         
@@ -430,7 +431,6 @@ class PacketPHY(PipelineStage):
         else:   
             self.stat.noSink = self.stat.noSink + 1
             
-        self._flushData()
             
     def _flushData(self):
         '''
