@@ -435,7 +435,7 @@ class PacketPHY(PipelineStage):
         '''
         Drop all collected data, stop timer
         '''
-        self.collectedData = []
+        del self.collectedData[:]
         if (self.txTimer):
             self.txTimer.cancel()
 
