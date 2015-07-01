@@ -188,7 +188,6 @@ class StatManager:
             for fieldName in counter.__dict__:
                 if (self.__isPrintableField(counter, fieldName)):
                     print fieldPattern.format(counter.__dict__[fieldName]),
-            print    
         
     def printAll(self):
         '''
@@ -377,7 +376,6 @@ class PacketPHY(PipelineStage):
             self._startTimer()
 
         self.collectedData = self.collectedData + data
-        print self.name, self.stat 
         packetLen = len(self.collectedData)
         if (packetLen > self.minimumPacketSize):
             self._sendBytes(self.collectedData)
