@@ -332,7 +332,7 @@ class Transport(PipelineStage):
     def __init__(self, name):
         PipelineStage.__init__(self, name)
         self.stat = StatManager.Block(name)
-        self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink"])
+        self.stat.addFieldsInt(["wakeups", "packets", "bytes", "bytes", "noSink"])
         statManager.addCounters("Transport", self.stat)
 
     def tx(self, data):
@@ -365,7 +365,7 @@ class PacketPHY(PipelineStage):
         self.stat = StatManager.Block(name)
         self.txTimer = None
         
-        self.stat.addFieldsInt(["wakeups", "packets", "bytes", "noSink", "timerStarted", "timerExpired", "timerCanceled"])
+        self.stat.addFieldsInt(["wakeups", "packets", "bytesIn", "bytesOut", "noSink", "timerStarted", "timerExpired", "timerCanceled"])
         statManager.addCounters("PacketPHY", self.stat)
         
         self.collectedData = []
@@ -377,19 +377,30 @@ class PacketPHY(PipelineStage):
         self.lock.acquire()
         
         self.stat.wakeups = self.stat.wakeups + 1
+        self.stat.bytesIn = self.stat.bytesIn + len(data)
         
         # Start timer on the first arriving byte
         if (len(self.collectedData) == 0): 
             self._startTimer()
 
-        for b in data:
-            self.collectedData.append(b)
+        self.collectedData = self.collectedData + data
         packetLen = len(self.collectedData)
         if (packetLen > self.minimumPacketSize):
-            self._sendBytes(self.collectedData, packetLen)
+            self._sendBytes(self.collectedData)
             self._flushData()
 
         self.lock.release()
+
+    def _sendBytes(self, packet):
+        '''
+        Forward bytes to the next stage
+        '''            
+        if (self.nextStage != None):
+            self.stat.packets = self.stat.packets + 1
+            self.stat.bytesOut = self.stat.bytesOut + len(packet)
+            self.nextStage.tx(packet)
+        else:   
+            self.stat.noSink = self.stat.noSink + 1
         
     def _startTimer(self):
         '''
@@ -415,22 +426,9 @@ class PacketPHY(PipelineStage):
         self.stat.timerExpired = self.stat.timerExpired + 1
         packetLen = len(self.collectedData)
         if (packetLen > 0):
-            self._sendBytes(self.collectedData, packetLen)
+            self._sendBytes(self.collectedData)
             
         self.lock.release()
-        
-        
-    def _sendBytes(self, packet, packetLen):
-        '''
-        Forward bytes to the next stage
-        '''            
-        if (self.nextStage != None):
-            self.stat.packets = self.stat.packets + 1
-            self.stat.bytes = self.stat.bytes + packetLen
-            self.nextStage.tx(packet)
-        else:   
-            self.stat.noSink = self.stat.noSink + 1
-            
             
     def _flushData(self):
         '''
