@@ -1,18 +1,16 @@
 #!/bin/bash
 
 WORK_DIR=`dirname $0`
+HELP_STRING="Use command 'exit' to move to the next test"
 
-echo Run GTBBTR
-$WORK_DIR/task1.py pipeline --stages GTBBTR
+for SETUP in GTBBTR GTPPTR GTPBTR GTBPTR
+do
+	echo Run $SETUP
+	echo $HELP_STRING
+	$WORK_DIR/task1.py pipeline --stages $SETUP
+done
 
-echo Run GTPPTR
-$WORK_DIR/task1.py pipeline --stages GTPPTR
 
-echo Run GTPBTR
-$WORK_DIR/task1.py pipeline --stages GTPBTR
-
-echo Run GTBPTR
-$WORK_DIR/task1.py pipeline --stages GTBPTR
 
 
 
