@@ -616,6 +616,8 @@ if __name__ == '__main__':
     # Enter main command loop 
     c = cmdGroundLevel()
     c.init(byteGenerator, bytePrinter)
+    # Print CLI help
+    c.do_help(None)
     while (True):
         try:
             c.cmdloop()
