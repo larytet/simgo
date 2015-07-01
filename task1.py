@@ -220,6 +220,14 @@ class PipelineStage():
         @param nextStage is an object which contains method tx()
         '''    
         self.nextStage = nextStage
+
+         
+    def tx(self, packet):
+        '''
+        Do nothing in the base class
+        '''
+        logger.error("Method tx() is called for the abstract pipeline stage");
+        pass
         
     def getName(self):
         return self.name
