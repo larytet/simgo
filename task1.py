@@ -489,6 +489,7 @@ class cmdGroundLevel(cmd.Cmd):
         '''
         self.byteGenerator = byteGenerator
         self.bytePrinter = bytePrinter
+        self.doNotRepeat = ["enable"]
 
     def emptyline(self):
         '''
@@ -497,6 +498,8 @@ class cmdGroundLevel(cmd.Cmd):
         
         lastcmd = self.lastcmd
         if ((lastcmd == "") or (lastcmd == None)):
+            return
+        if (lastcmd in self.doNotRepeat):
             return
         
         words = lastcmd.split()
