@@ -352,11 +352,11 @@ class Transport(PipelineStage):
         
         self.lock.acquire()
         self.stat.wakeups = self.stat.wakeups + 1
-        self.stat.packets = self.stat.packets + 1
-        self.stat.bytes = self.stat.bytes + packetLen
         self.lock.release()
         
         if (self.nextStage != None):
+            self.stat.packets = self.stat.packets + 1
+            self.stat.bytes = self.stat.bytes + packetLen
             self.nextStage.tx(data)
         else:
             self.stat.noSink = self.stat.noSink + 1
@@ -466,11 +466,11 @@ class BytePHY(PipelineStage):
 
         self.lock.acquire()
         self.stat.wakeups = self.stat.wakeups + 1
-        self.stat.packets = self.stat.packets + 1
-        self.stat.bytes = self.stat.bytes + packetLen
         self.lock.release()
         
         if (self.nextStage != None):
+            self.stat.bytes = self.stat.bytes + packetLen
+            self.stat.packets = self.stat.packets + 1
             self.nextStage.tx(data)
         else:
             self.stat.noSink = self.stat.noSink + 1
