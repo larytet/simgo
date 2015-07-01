@@ -27,7 +27,7 @@ Examples:
 import cmd
 import logging
 from time import sleep
-import threading
+import threading, collections
 import random, time
 
 import os
@@ -108,6 +108,7 @@ class StatManager:
             self.name = name
             self.ignoreFields = []
             
+            self.__dict__ = collections.OrderedDict(sorted(self.__dict__.items()))
             #  All fields added so far are in the ignore list
             for fieldName in self.__dict__:
                 self.ignoreFields.append(fieldName)
