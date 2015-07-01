@@ -189,8 +189,8 @@ class StatManager:
             print fieldPattern.format(counter.name),
             
             # Print the fields in the insertion order
-            # The dictionary counter.__dict__ is ordered - after I discover a counter I can skip call to 
-            # self._isPrintableField()
+            # The dictionary counter.__dict__ is ordered - after I discover the first counter 
+            # I can skip call to self._isPrintableField() and save some CPU cycles
             isPrintable = False
             for fieldName in counter.__dict__:
                 if ((isPrintable) or (self._isPrintableField(counter, fieldName))):
