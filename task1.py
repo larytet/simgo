@@ -548,6 +548,14 @@ def initPipeline(configurationStr):
     '''
     Create and link stages of the pipeline
     '''
+    if (configurationStr == "GTBBTR") : (stage1, stage2) = (BytePHY("bytePhy0"), BytePHY("bytePhy1")); 
+    elif (configurationStr == "GTPPTR") : (stage1, stage2) = (PacketPHY("packetPhy0"), PacketPHY("packetPhy1")); 
+    elif (configurationStr == "GTBPTR") : (stage1, stage2) = (BytePHY("bytePhy0"), PacketPHY("packetPhy0"));
+    elif (configurationStr == "GTPBTR") : (stage1, stage2) = (PacketPHY("packetPhy0"), BytePHY("bytePhy0"));
+    else:
+        logger.error("Pipeline configuration is not supported {0}".format(configurationStr))
+        exit(-1)
+
     bytePrinter = BytePrinter()
     byteGenerator = ByteGenerator()
     transport0 = Transport("transport0")
@@ -555,37 +563,9 @@ def initPipeline(configurationStr):
     byteGenerator.setNext(transport0)
     transport1.setNext(bytePrinter)
 
-    if (configurationStr == "GTBBTR"):
-        bytePhy0 = BytePHY("bytePhy0")
-        bytePhy1 = BytePHY("bytePhy1")
-        transport0.setNext(bytePhy0)
-        bytePhy0.setNext(bytePhy1)
-        bytePhy1.setNext(transport1)
-        
-    elif (configurationStr == "GTPPTR"):
-        packetPhy0 = PacketPHY("packetPhy0")
-        packetPhy1 = PacketPHY("packetPhy1")
-        transport0.setNext(packetPhy0)
-        packetPhy0.setNext(packetPhy1)
-        packetPhy1.setNext(transport1)
-
-    elif (configurationStr == "GTBPTR"):
-        bytePhy0 = BytePHY("bytePhy0")
-        packetPhy0 = PacketPHY("packetPhy0")
-        transport0.setNext(bytePhy0)
-        bytePhy0.setNext(packetPhy0)
-        packetPhy0.setNext(transport1)
-        
-    elif (configurationStr == "GTPBTR"):
-        bytePhy0 = BytePHY("bytePhy0")
-        packetPhy0 = PacketPHY("packetPhy0")
-        transport0.setNext(packetPhy0)
-        packetPhy0.setNext(bytePhy0)
-        bytePhy0.setNext(transport1)
-        
-    else:
-        logger.error("Pipeline configuration is not supported {0}".format(configurationStr))
-        exit(-1)
+    transport0.setNext(stage1)
+    stage1.setNext(stage2)
+    stage2.setNext(transport1)
         
     return (byteGenerator, bytePrinter)
 
