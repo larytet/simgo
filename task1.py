@@ -147,7 +147,7 @@ class StatManager:
         group = self.groups[groupName]
         group.append(block) 
 
-    def __isPrintableField(self, block, fieldName):
+    def _isPrintableField(self, block, fieldName):
         '''
         I print only counters in the block object, ignore Python internal fields
         '''
@@ -167,7 +167,7 @@ class StatManager:
         print fieldPattern.format(groupName),
         o = counters[0]
         for fieldName in o.__dict__:
-            if (self.__isPrintableField(o, fieldName)):
+            if (self._isPrintableField(o, fieldName)):
                 print fieldPattern.format(fieldName),
         print
 
@@ -187,10 +187,15 @@ class StatManager:
         for counter in counters:
             # Print the name of the counter block
             print fieldPattern.format(counter.name),
+            
             # Print the fields in the insertion order
+            # The dictionary counter.__dict__ is ordered - after I discover a counter I can skip call to 
+            # self._isPrintableField()
+            isPrintable = False
             for fieldName in counter.__dict__:
-                if (self.__isPrintableField(counter, fieldName)):
+                if ((isPrintable) or (self._isPrintableField(counter, fieldName))):
                     print fieldPattern.format(counter.__dict__[fieldName]),
+                    isPrintable = True
             print
         
     def printAll(self):
