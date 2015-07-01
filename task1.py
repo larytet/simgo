@@ -108,6 +108,7 @@ class StatManager:
             self.name = name
             self.ignoreFields = []
             
+            # Fields in the Block object are ordered as inserted 
             self.__dict__ = collections.OrderedDict(sorted(self.__dict__.items()))
             #  All fields added so far are in the ignore list
             for fieldName in self.__dict__:
@@ -186,6 +187,7 @@ class StatManager:
         for counter in counters:
             # Print the name of the counter block
             print fieldPattern.format(counter.name),
+            # Print the fields in the insertion order
             for fieldName in counter.__dict__:
                 if (self.__isPrintableField(counter, fieldName)):
                     print fieldPattern.format(counter.__dict__[fieldName]),
