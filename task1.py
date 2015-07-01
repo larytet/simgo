@@ -188,6 +188,7 @@ class StatManager:
             for fieldName in counter.__dict__:
                 if (self.__isPrintableField(counter, fieldName)):
                     print fieldPattern.format(counter.__dict__[fieldName]),
+            print
         
     def printAll(self):
         '''
