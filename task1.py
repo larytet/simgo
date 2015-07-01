@@ -221,13 +221,6 @@ class PipelineStage():
         '''    
         self.nextStage = nextStage
         
-    def tx(self, packet):
-        '''
-        Do nothing in the base class
-        '''
-        logger.error("Method tx() is called for the abstract pipeline stage");
-        pass
-    
     def getName(self):
         return self.name
         
@@ -384,13 +377,14 @@ class PacketPHY(PipelineStage):
             self._startTimer()
 
         self.collectedData = self.collectedData + data
+        print self.name, self.stat 
         packetLen = len(self.collectedData)
         if (packetLen > self.minimumPacketSize):
             self._sendBytes(self.collectedData)
             self._flushData()
 
         self.lock.release()
-
+        
     def _sendBytes(self, packet):
         '''
         Forward bytes to the next stage
