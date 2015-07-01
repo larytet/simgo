@@ -259,7 +259,7 @@ class ByteGenerator(threading.Thread, PipelineStage):
         self.maximumBurstSize, self.period = maximumBurstSize, period
         
         self.stat = StatManager.Block("")
-        self.stat.addFieldsInt(["wakeups", "bursts", "bytes", "zeroPackets", "noSink"])
+        self.stat.addFieldsInt(["wakeups", "bursts", "bytes", "zeroPackets", "noSink", "lastBurstSize"])
         statManager.addCounters(self.name, self.stat)
         self.exitFlag = False
         
@@ -273,6 +273,7 @@ class ByteGenerator(threading.Thread, PipelineStage):
             packet = os.urandom(packetSize)
             self.stat.wakeups = self.stat.wakeups + 1
             packetLen = len(packet)
+            self.stat.lastBurstSize = packetLen; 
             if (packetLen > 0):
                 self._sendBytes(packet, packetLen)
             else:
