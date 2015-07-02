@@ -5,23 +5,16 @@
 Usage:
   task1.py -h | --help
   task1.py --version
-  task1.py pipeline --stages=<STR>   
+  task1.py pipeline --stages=<CONF>   
 
 Options:
   -h --help            Show this screen.
   --version            Show version.
-  --stages=<STR>     Configure the pipeline.
+  --stages <CONF>      Configuration of the pipeline (GTPBTR|GTBBTR|GTPPTR|GTBPTR)
   
 Examples:
    # Configure Byte Generator -> Transport -> PacketPHY -> BytePHY -> Transport -> Byte Printer
   ./task1.py pipeline --stages GTPBTR
-  
-   # Configure Byte Generator -> Transport -> BytePHY -> BytePHY -> Transport -> Byte Printer
-  ./task1.py pipeline --stages GTBBTR
-  
-  Also:
-  ./task1.py pipeline --stages GTPPTR
-  ./task1.py pipeline --stages GTBPTR
 """
 
 import cmd
