@@ -584,12 +584,7 @@ if __name__ == '__main__':
     logger = logging.getLogger('simgo')
     logger.setLevel(logging.INFO)
 
-    if (not ('--stages' in arguments)):     
-        logger.error("Please configure the pipeline, for example, 'pipeline --stages GTPBTR'")
-        exit(-1)
-        
     configurationStr = arguments['--stages']
-
     (res, byteGenerator, bytePrinter) = initPipeline(configurationStr)
     if (not res):
         exit(-1)
