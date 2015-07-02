@@ -29,7 +29,7 @@ try:
     from docopt import docopt
 except:
     print "docopt is required to run this script"
-    print "On Ubuntu try 'apt-get install python-docopt'"
+    print "On Ubuntu try 'apt-get install python-docopt' or 'pip install docopt'"
     exit(-1)
 
 
