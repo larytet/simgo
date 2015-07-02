@@ -166,18 +166,12 @@ class StatManager:
                 fieldsToPrint.append(fieldName)
         print
 
+        # Print line of dashes
         separatorLength = 14
-        separator = ""
-        while (separatorLength > 0):
-            separator = separator + "-"
-            separatorLength = separatorLength - 1
+        separator = "-" * separatorLength;
+        separator = (separator + " ") * (len(fieldsToPrint) + 1)  
+        print separator
              
-        fields = len(o.__dict__)  + 1 - len(o.ignoreFields)
-        while (fields > 0):
-            fields = fields - 1
-            print separator,
-        print
-        
         # Print table data
         for counter in counters:
             # Print the name of the counter block
