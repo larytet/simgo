@@ -554,7 +554,7 @@ def initPipeline(configurationStr):
     elif (configurationStr == "GTPBTR") : (stage1, stage2) = (PacketPHY("packetPhy0"), BytePHY("bytePhy0"));
     else:
         logger.error("Pipeline configuration is not supported {0}".format(configurationStr))
-        exit(-1)
+        return (False, None, None)
 
     bytePrinter = BytePrinter()
     byteGenerator = ByteGenerator()
@@ -567,7 +567,7 @@ def initPipeline(configurationStr):
     stage1.setNext(stage2)
     stage2.setNext(transport1)
         
-    return (byteGenerator, bytePrinter)
+    return (True, byteGenerator, bytePrinter)
 
 
 def startPipeline():
@@ -590,7 +590,10 @@ if __name__ == '__main__':
         
     configurationStr = arguments['--stages']
 
-    (byteGenerator, bytePrinter) = initPipeline(configurationStr)
+    (res, byteGenerator, bytePrinter) = initPipeline(configurationStr)
+    if (not res):
+        exit(-1)
+
     startPipeline()        
         
     # Enter main command loop 
