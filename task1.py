@@ -157,11 +157,13 @@ class StatManager:
         fieldPattern = "{:>14}"
             
         # Print column names
+        fieldsToPrint = []
         print fieldPattern.format(groupName),
         o = counters[0]
         for fieldName in o.__dict__:
             if (self._isPrintableField(o, fieldName)):
                 print fieldPattern.format(fieldName),
+                fieldsToPrint.append(fieldName)
         print
 
         separatorLength = 14
@@ -182,13 +184,9 @@ class StatManager:
             print fieldPattern.format(counter.name),
             
             # Print the fields in the insertion order
-            # The dictionary counter.__dict__ is ordered - after I discover the first counter 
-            # I can skip call to self._isPrintableField() and save some CPU cycles
-            isPrintable = False
-            for fieldName in counter.__dict__:
-                if ((isPrintable) or (self._isPrintableField(counter, fieldName))):
-                    print fieldPattern.format(counter.__dict__[fieldName]),
-                    isPrintable = True
+            for fieldName in fieldsToPrint:
+                print fieldPattern.format(counter.__dict__[fieldName]),
+            # New line after every block
             print
         
     def printAll(self):
