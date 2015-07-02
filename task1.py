@@ -99,14 +99,10 @@ class StatManager:
             @param name is a name of the block. 
             '''
             self.name = name
-            self.ignoreFields = []
             self.fieldsToPrint = []
             
             # Fields in the Block object are ordered as inserted 
             self.__dict__ = collections.OrderedDict(sorted(self.__dict__.items()))
-            #  All fields added so far are in the ignore list
-            for fieldName in self.__dict__:
-                self.ignoreFields.append(fieldName)
 
         
         def addField(self, (name, initialValue)):
@@ -143,13 +139,6 @@ class StatManager:
         group = self.groups[groupName]
         group.append(block) 
 
-    def _isPrintableField(self, block, fieldName):
-        '''
-        I print only counters in the block object, ignore Python internal fields
-        '''
-        result = fieldName in block.ignoreFields
-        return (not result)
-        
     def printGroup(self, groupName):
         '''
         Print counters from the specified by name group 
