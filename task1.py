@@ -546,7 +546,7 @@ def initPipeline(configurationStr):
     elif (configurationStr == "GTBPTR") : (stage1, stage2) = (BytePHY("bytePhy0"), PacketPHY("packetPhy0"));
     elif (configurationStr == "GTPBTR") : (stage1, stage2) = (PacketPHY("packetPhy0"), BytePHY("bytePhy0"));
     else:
-        logger.error("Pipeline configuration is not supported {0}".format(configurationStr))
+        logger.error("Pipeline configuration '{0}' is not supported".format(configurationStr))
         return (False, None, None)
 
     bytePrinter = BytePrinter()
