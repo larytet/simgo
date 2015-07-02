@@ -100,6 +100,7 @@ class StatManager:
             '''
             self.name = name
             self.ignoreFields = []
+            self.fieldsToPrint = []
             
             # Fields in the Block object are ordered as inserted 
             self.__dict__ = collections.OrderedDict(sorted(self.__dict__.items()))
@@ -114,6 +115,8 @@ class StatManager:
             @param name is a name of the counter, for example "tx"
             '''
             self.__dict__[name] = initialValue
+            self.fieldsToPrint.append(name)
+
 
         def addFields(self, fields):
             '''
@@ -157,28 +160,24 @@ class StatManager:
         fieldPattern = "{:>14}"
             
         # Print column names
-        fieldsToPrint = []
         print fieldPattern.format(groupName),
         o = counters[0]
-        for fieldName in o.__dict__:
-            if (self._isPrintableField(o, fieldName)):
-                print fieldPattern.format(fieldName),
-                fieldsToPrint.append(fieldName)
+        for fieldName in o.fieldsToPrint:
+            print fieldPattern.format(fieldName),
         print
 
-        # Print line of dashes
+        # Print a line of dashes
         separatorLength = 14
         separator = "-" * separatorLength;
-        separator = (separator + " ") * (len(fieldsToPrint) + 1)  
+        separator = (separator + " ") * (len(o.fieldsToPrint) + 1)  
         print separator
              
         # Print table data
         for counter in counters:
             # Print the name of the counter block
             print fieldPattern.format(counter.name),
-            
             # Print the fields in the insertion order
-            for fieldName in fieldsToPrint:
+            for fieldName in counter.fieldsToPrint:
                 print fieldPattern.format(counter.__dict__[fieldName]),
             # New line after every block
             print
