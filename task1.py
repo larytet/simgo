@@ -71,11 +71,9 @@ def convertToFloat(s):
     value = None;
     try:
         value = float(s)
-        result = True;
     except:
         logger.error("Bad formed number '{0}'".format(s));
-        result = False;
-    return (result, value);
+    return value;
 
 
 class StatManager:
@@ -483,8 +481,8 @@ class cmdGroundLevel(cmd.Cmd):
         pass
 
     def do_sleep(self, line):
-        (result, t) = convertToFloat(line)
-        if (result):
+        t = convertToFloat(line)
+        if (t):
             time.sleep(t)
         else:
             self.help_sleep()
