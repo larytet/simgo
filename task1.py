@@ -86,8 +86,6 @@ class StatManager:
     '''
     def __init__(self):
         self.groups = {}
-        # I use fieldLength when formating the print of the counters tables
-        self.fieldLength = 1
 
     class Block:
         '''
@@ -103,6 +101,9 @@ class StatManager:
             
             # Fields in the Block object are ordered as inserted 
             self.__dict__ = collections.OrderedDict(sorted(self.__dict__.items()))
+            
+            # I use fieldLength when formating the print of the counters tables
+            self.fieldLength = 1
 
         
         def addField(self, (name, initialValue)):
@@ -147,7 +148,8 @@ class StatManager:
         counters = self.groups[groupName]
         if (len(counters) <= 0):
             return
-        fieldLength = self.fieldLength
+        
+        fieldLength = counters.fieldLength
         fieldPattern = "{:>"+fieldLength+"14}"
             
         # Print column names
