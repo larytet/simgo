@@ -33,7 +33,7 @@ except:
     exit(-1)
 
 
-def buildhexstring(value, width=0, prefix=''):
+def buildHexString(value, width=0, prefix=''):
     '''
     Get an integer, return a formatted string 
     For example if value is 0x1E55, width=8 this function will retun "00001E55"
@@ -60,7 +60,7 @@ def bytesToHexString(data):
     '''
     s = ""
     for c in data:
-        s = s + "{0}".format(buildhexstring(c, 2)) + " "
+        s = s + "{0}".format(buildHexString(c, 2)) + " "
     return s
 
 def convertToFloat(s):
