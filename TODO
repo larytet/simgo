@@ -1,4 +1,2 @@
 You documented functions well (which is good) but while you used @param and @return you didn't use @ptype and @rtype
 
-In addCounters we think you could have used collections.defaultdict
-
