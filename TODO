@@ -1,0 +1,21 @@
+In the import section, you imported sleep from time, and then imported the complete time module. There's no need for both. It seems that the only time function you use is sleep and the only random function you use is randint, so there's no need to import the entire module.
+
+Just a matter of convention, but in python it is common to use build_hex_string and not buildhexstring
+
+You documented functions well (which is good) but while you used @param and @return you didn't use @ptype and @rtype
+
+"valueStr = prefix + valueStr" - there's no need for this, you can simply "return prefix + valueStr"
+
+convertToFloat is all in C (coded in Python). The Python way to do it is simply to try "return float(s)" and if there's an 
+exception to return None. No need for value or result. Also, it's better practive to except specific exceptions, not all.
+
+if (not groupName in self.groups): -> if (groupName not in self.groups):
+
+In addCounters we think you could have used collections.defaultdict
+
+if (len(counters) <= 0): -> if counters:
+
+You used some "magic numbers" (14) which we were surprised to see
+
+You used "self.stat = StatManager.Block("")" Instead of this you can have the constructor of class block 
+get a default value "def __init__(self, name = ""):".
