@@ -1,6 +1,3 @@
-In the import section, you imported sleep from time, and then imported the complete time module. There's no need for both. It seems that the only time function you use is sleep and the only random function you use is randint, so there's no need to import the entire module.
-
-
 You documented functions well (which is good) but while you used @param and @return you didn't use @ptype and @rtype
 
 In addCounters we think you could have used collections.defaultdict
