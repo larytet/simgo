@@ -66,7 +66,7 @@ def bytesToHexString(data):
 def convertToFloat(s):
     '''
     Convert string to float, handle exception
-    Return True if conversion is Ok
+    Return non-None if conversion is Ok
     '''
     value = None;
     try:
