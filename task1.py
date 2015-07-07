@@ -86,6 +86,8 @@ class StatManager:
     '''
     def __init__(self):
         self.groups = {}
+        # I use fieldLength when formating the print of the counters tables
+        self.fieldLength = 1
 
     class Block:
         '''
@@ -139,7 +141,8 @@ class StatManager:
         if (not groupName in self.groups):
             self.groups[groupName] = []
         group = self.groups[groupName]
-        group.append(block) 
+        group.append(block)
+        self.fieldLength = max(self.fieldLength, block.fieldLength)
 
     def printGroup(self, groupName):
         '''
@@ -149,8 +152,8 @@ class StatManager:
         if (len(counters) <= 0):
             return
         
-        fieldLength = counters.fieldLength
-        fieldPattern = "{:>"+fieldLength+"14}"
+        fieldLength = self.fieldLength
+        fieldPattern = '{:>'+str(fieldLength)+'}'
             
         # Print column names
         print fieldPattern.format(groupName),
