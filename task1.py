@@ -94,7 +94,7 @@ class StatManager:
         Useful when there are many instances of the same set of counters. 
         For example counter for "eth0", "eth1"
         '''
-        def __init__(self, name):
+        def __init__(self, name=""):
             '''
             @param name is a name of the block. 
             '''
@@ -237,7 +237,7 @@ class ByteGenerator(threading.Thread, PipelineStage):
         PipelineStage.__init__(self, "ByteGenerator")
         self.maximumBurstSize, self.period = maximumBurstSize, period
         
-        self.stat = StatManager.Block("")
+        self.stat = StatManager.Block()
         self.stat.addFieldsInt(["wakeups", "bursts", "bytes", "zeroPackets", "noSink", "lastBurstSize"])
         statManager.addCounters(self.name, self.stat)
         self.exitFlag = False
@@ -282,7 +282,7 @@ class BytePrinter(PipelineStage):
     '''
     def __init__(self):
         PipelineStage.__init__(self, "BytePrinter")
-        self.stat = StatManager.Block("")
+        self.stat = StatManager.Block()
         self.stat.addFieldsInt(["wakeups", "packets", "bytes"])
         statManager.addCounters(self.name, self.stat)
         self.printEnabled = True
